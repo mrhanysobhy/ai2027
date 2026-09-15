@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>دراسة المعلومات | الوحدة الأولى: ما هي المعلومات؟</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#132A3A;
+    --ink-soft:#3E5768;
+    --paper:#F3F7F7;
+    --card:#FFFFFF;
+    --teal:#0E7C7B;
+    --teal-dark:#0A5F5F;
+    --amber:#E2A63B;
+    --coral:#DD5B4B;
+    --sage:#3F9A6A;
+    --line:#DCE6E6;
+    --shadow: 0 6px 24px rgba(19,42,58,0.08);
+    --radius: 14px;
+    font-size: 16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{scroll-behavior:smooth;}
+  body{
+    font-family:'Tajawal', sans-serif;
+    background:
+      radial-gradient(1200px 600px at 100% -10%, rgba(14,124,123,0.07), transparent 60%),
+      radial-gradient(1000px 500px at -10% 110%, rgba(226,166,59,0.08), transparent 60%),
+      var(--paper);
+    color:var(--ink);
+    min-height:100vh;
+    line-height:1.75;
+  }
+  h1,h2,h3,h4{font-family:'Cairo', sans-serif; color:var(--ink);}
+  ::selection{background:var(--amber); color:var(--ink);}
+
+  /* ===== Top Bar ===== */
+  header.topbar{
+    position:sticky; top:0; z-index:50;
+    background:linear-gradient(180deg, #ffffffee, #ffffffdd);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar-inner{
+    max-width:1180px; margin:0 auto;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px; gap:16px; flex-wrap:wrap;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .brand .badge{
+    width:44px; height:44px; border-radius:12px;
+    background:linear-gradient(135deg, var(--teal), var(--teal-dark));
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-family:'Cairo'; font-weight:800; font-size:20px;
+    box-shadow: var(--shadow);
+  }
+  .brand-text h1{font-size:1.05rem; font-weight:800;}
+  .brand-text span{font-size:0.8rem; color:var(--ink-soft);}
+
+  nav.tabs{display:flex; gap:8px; background:#EAF2F2; padding:6px; border-radius:999px;}
+  nav.tabs button{
+    border:none; background:transparent; cursor:pointer;
+    font-family:'Cairo'; font-weight:700; font-size:0.92rem;
+    padding:10px 20px; border-radius:999px; color:var(--ink-soft);
+    transition: all .25s ease;
+    white-space:nowrap;
+  }
+  nav.tabs button.active{
+    background:var(--teal); color:#fff;
+    box-shadow: 0 4px 14px rgba(14,124,123,0.35);
+  }
+  nav.tabs button:hover:not(.active){background:#DCEAEA;}
+
+  main{max-width:1180px; margin:0 auto; padding:28px 22px 80px;}
+  section.view{display:none; animation:fadeUp .5s ease;}
+  section.view.active{display:block;}
+  @keyframes fadeUp{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+
+  /* ===== Hero ===== */
+  .hero{
+    background:linear-gradient(120deg, var(--ink) 0%, #1E4257 55%, var(--teal-dark) 100%);
+    color:#fff; border-radius:20px; padding:34px 32px; margin-bottom:30px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute; inset:0;
+    background: repeating-linear-gradient(135deg, rgba(255,255,255,0.04) 0 2px, transparent 2px 26px);
+  }
+  .hero h2{color:#fff; font-size:1.7rem; margin-bottom:8px; position:relative;}
+  .hero p{color:#DDEDEC; max-width:620px; position:relative;}
+  .hero .pill-row{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap; position:relative;}
+  .hero .pill{
+    background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.25);
+    padding:6px 14px; border-radius:999px; font-size:0.82rem; font-weight:500;
+  }
+
+  /* ===== Explanation blocks ===== */
+  .lesson-block{margin-bottom:36px;}
+  .lesson-head{
+    display:flex; align-items:center; gap:12px; margin-bottom:16px;
+    padding-bottom:10px; border-bottom:3px solid var(--teal);
+  }
+  .lesson-head .num{
+    font-family:'Cairo'; font-weight:800; color:#fff; background:var(--teal);
+    width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .lesson-head h2{font-size:1.35rem;}
+
+  .card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px 24px; margin-bottom:18px; box-shadow: var(--shadow);
+  }
+  .card h3{font-size:1.08rem; display:flex; align-items:center; gap:10px; margin-bottom:12px; color:var(--teal-dark);}
+  .card h3 .ico{font-size:1.2rem;}
+  .card p{color:var(--ink-soft); margin-bottom:8px;}
+  .card ul{margin-inline-start:22px; color:var(--ink-soft);}
+  .card li{margin-bottom:6px;}
+  .term{color:var(--teal-dark); font-weight:700; font-family:'Cairo';}
+
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  @media (max-width:760px){.grid-2{grid-template-columns:1fr;}}
+
+  .prop-card{
+    border-radius:12px; padding:16px 18px; background:#F0F7F6; border:1px solid #D7EAE8;
+  }
+  .prop-card h4{font-family:'Cairo'; font-size:0.98rem; color:var(--teal-dark); margin-bottom:6px; display:flex; gap:8px; align-items:center;}
+  .prop-card p{font-size:0.9rem; color:var(--ink-soft); margin:0;}
+
+  .note-box{
+    border-radius:12px; padding:16px 18px; margin:14px 0;
+    display:flex; gap:12px; align-items:flex-start;
+  }
+  .note-box.info{background:#EAF4FB; border:1px solid #C9E3F5;}
+  .note-box.warn{background:#FBF0E4; border:1px solid #F0D9AE;}
+  .note-box.danger{background:#FBEAE7; border:1px solid #F3C8C0;}
+  .note-box .ico{font-size:1.3rem;}
+  .note-box strong{font-family:'Cairo'; display:block; margin-bottom:4px;}
+
+  table.data-table{width:100%; border-collapse:collapse; margin:10px 0; font-size:0.92rem;}
+  table.data-table th, table.data-table td{
+    padding:12px 14px; text-align:right; border-bottom:1px solid var(--line);
+  }
+  table.data-table th{background:#EAF2F2; font-family:'Cairo'; color:var(--teal-dark); font-weight:700;}
+  table.data-table tr:last-child td{border-bottom:none;}
+  table.data-table tr:hover td{background:#F7FBFB;}
+
+  .chip-list{display:flex; flex-wrap:wrap; gap:8px; margin-top:6px;}
+  .chip{background:#fff; border:1px solid var(--line); border-radius:999px; padding:5px 13px; font-size:0.85rem; color:var(--ink-soft);}
+
+  .ethics-list{display:flex; flex-direction:column; gap:10px;}
+  .ethics-item{display:flex; gap:12px; align-items:flex-start; padding:12px 14px; border-radius:10px; background:#FAFCFC; border:1px solid var(--line);}
+  .ethics-item .x{color:var(--coral); font-weight:800; font-family:'Cairo'; flex-shrink:0;}
+
+  /* ===== Review section ===== */
+  .review-tabs{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px;}
+  .review-tabs button{
+    font-family:'Cairo'; font-weight:700; font-size:0.9rem;
+    padding:11px 18px; border-radius:12px; border:1px solid var(--line); background:#fff; cursor:pointer;
+    color:var(--ink-soft); transition:.2s;
+  }
+  .review-tabs button.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .review-set{display:none;}
+  .review-set.active{display:block;}
+
+  .q-card{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px 22px; margin-bottom:18px; box-shadow:var(--shadow);
+  }
+  .q-card .q-title{font-family:'Cairo'; font-weight:700; margin-bottom:14px; display:flex; gap:10px;}
+  .q-card .q-title .qn{
+    background:var(--teal); color:#fff; width:28px; height:28px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0;
+  }
+  .tf-options, .mc-options{display:flex; flex-direction:column; gap:8px; margin-bottom:14px;}
+  .tf-options{flex-direction:row; gap:12px;}
+  .opt-btn{
+    text-align:right; padding:11px 16px; border-radius:10px; border:1px solid var(--line);
+    background:#fbfdfd; cursor:pointer; font-family:'Tajawal'; font-size:0.94rem; transition:.15s;
+  }
+  .tf-options .opt-btn{flex:1; text-align:center; font-family:'Cairo'; font-weight:700;}
+  .opt-btn:hover{border-color:var(--teal); background:#F0F7F6;}
+  .opt-btn.selected{border-color:var(--teal); background:#DFF0EE; box-shadow:0 0 0 2px rgba(14,124,123,0.15) inset;}
+
+  .fill-input, .short-input{
+    width:100%; padding:11px 14px; border-radius:10px; border:1px solid var(--line);
+    font-family:'Tajawal'; font-size:0.95rem; margin-bottom:14px; background:#fbfdfd;
+  }
+  .short-input{min-height:80px; resize:vertical; font-family:'Tajawal';}
+  .fill-input:focus, .short-input:focus{outline:none; border-color:var(--teal);}
+
+  .show-answer-btn{
+    background:var(--amber); color:#4A3410; border:none; padding:9px 18px; border-radius:9px;
+    font-family:'Cairo'; font-weight:700; cursor:pointer; font-size:0.87rem; transition:.2s;
+  }
+  .show-answer-btn:hover{filter:brightness(0.95); transform:translateY(-1px);}
+
+  .answer-reveal{
+    display:none; margin-top:14px; padding:14px 16px; border-radius:10px;
+    background:#F0F7F6; border-inline-start:4px solid var(--sage);
+    animation:fadeUp .35s ease;
+  }
+  .answer-reveal.show{display:block;}
+  .answer-reveal .lbl{font-family:'Cairo'; font-weight:800; color:var(--teal-dark); margin-bottom:5px; display:block;}
+  .answer-reveal .why{color:var(--ink-soft); font-size:0.92rem;}
+
+  /* ===== Quiz section ===== */
+  .reg-wrap{
+    max-width:460px; margin:40px auto; background:var(--card); border-radius:20px;
+    padding:34px 30px; box-shadow:var(--shadow); border:1px solid var(--line); text-align:center;
+  }
+  .reg-wrap .ico-big{font-size:2.6rem; margin-bottom:8px;}
+  .reg-wrap h2{margin-bottom:6px;}
+  .reg-wrap p{color:var(--ink-soft); margin-bottom:22px; font-size:0.92rem;}
+  .reg-wrap input{
+    width:100%; padding:13px 16px; border-radius:11px; border:1.5px solid var(--line);
+    font-family:'Tajawal'; font-size:1rem; margin-bottom:8px;
+  }
+  .reg-wrap input:focus{outline:none; border-color:var(--teal);}
+  .field-error{color:var(--coral); font-size:0.82rem; text-align:right; min-height:18px; margin-bottom:10px;}
+  .primary-btn{
+    background:var(--teal); color:#fff; border:none; padding:13px 24px; border-radius:11px;
+    font-family:'Cairo'; font-weight:700; font-size:1rem; cursor:pointer; width:100%;
+    transition:.2s;
+  }
+  .primary-btn:hover{background:var(--teal-dark); transform:translateY(-1px);}
+  .primary-btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
+
+  .quiz-hud{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    background:var(--ink); color:#fff; border-radius:14px; padding:14px 20px; margin-bottom:22px;
+  }
+  .quiz-hud .stu{font-family:'Cairo'; font-weight:700;}
+  .quiz-hud .timer{
+    font-family:'Cairo'; font-weight:800; font-size:1.1rem; background:rgba(255,255,255,0.12);
+    padding:6px 16px; border-radius:999px; display:flex; align-items:center; gap:8px;
+  }
+  .progress-bar{height:8px; background:#E4ECEC; border-radius:99px; overflow:hidden; margin-bottom:24px;}
+  .progress-bar > div{height:100%; background:linear-gradient(90deg, var(--teal), var(--amber)); width:0%; transition:width .3s ease;}
+
+  .quiz-nav{display:flex; justify-content:space-between; margin-top:20px; gap:10px;}
+  .ghost-btn{
+    background:#fff; border:1.5px solid var(--line); color:var(--ink); padding:11px 22px;
+    border-radius:10px; font-family:'Cairo'; font-weight:700; cursor:pointer;
+  }
+  .ghost-btn:hover{border-color:var(--teal); color:var(--teal-dark);}
+
+  .result-wrap{
+    max-width:560px; margin:20px auto; text-align:center; background:var(--card);
+    border-radius:20px; padding:40px 30px; box-shadow:var(--shadow); border:1px solid var(--line);
+  }
+  .score-ring{
+    width:150px; height:150px; border-radius:50%; margin:0 auto 20px;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    background:conic-gradient(var(--teal) calc(var(--pct)*1%), #E7EFEF 0);
+    position:relative;
+  }
+  .score-ring::before{
+    content:""; position:absolute; inset:10px; background:#fff; border-radius:50%;
+  }
+  .score-ring .val{position:relative; font-family:'Cairo'; font-weight:800; font-size:1.9rem; color:var(--teal-dark);}
+  .score-ring .lbl2{position:relative; font-size:0.78rem; color:var(--ink-soft);}
+  .result-detail{text-align:right; margin-top:26px; border-top:1px solid var(--line); padding-top:20px;}
+  .result-row{display:flex; justify-content:space-between; padding:8px 0; font-size:0.92rem; border-bottom:1px dashed var(--line);}
+  .result-row b{font-family:'Cairo';}
+  .badge-correct{color:var(--sage); font-weight:700;}
+  .badge-wrong{color:var(--coral); font-weight:700;}
+
+  footer.site-footer{text-align:center; padding:26px; color:var(--ink-soft); font-size:0.85rem;}
+
+  @media (max-width:640px){
+    .topbar-inner{flex-direction:column; align-items:stretch;}
+    nav.tabs{justify-content:center;}
+    .hero{padding:24px 20px;}
+    .tf-options{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="badge">1</div>
+      <div class="brand-text">
+        <h1>دراسة المعلومات</h1>
+        <span>الوحدة الأولى · ما هي المعلومات؟</span>
+      </div>
+    </div>
+    <nav class="tabs" id="mainTabs">
+      <button data-view="explain" class="active">📘 الشرح</button>
+      <button data-view="review">📝 المراجعة</button>
+      <button data-view="quiz">🎓 الاختبار</button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- ======================= قسم الشرح ======================= -->
+  <section class="view active" id="view-explain">
+
+    <div class="hero">
+      <h2>الوحدة الأولى: ما هي المعلومات؟</h2>
+      <p>في هذه الوحدة سنتعرف على الفرق بين البيانات والمعلومات والمعرفة، وأنواع الوسائط التي تنقل المعلومات إلينا، بالإضافة إلى الأخلاقيات التي يجب مراعاتها عند التعامل مع المعلومات في عالم الإنترنت.</p>
+      <div class="pill-row">
+        <span class="pill">الدرس 1: المعلومات والوسائط</span>
+        <span class="pill">الدرس 2: أخلاقيات المعلومات</span>
+      </div>
+    </div>
+
+    <!-- ---------- الدرس الأول ---------- -->
+    <div class="lesson-block">
+      <div class="lesson-head">
+        <div class="num">1</div>
+        <h2>المعلومات والوسائط</h2>
+      </div>
+
+      <div class="card">
+        <h3><span class="ico">🔤</span> أ. البيانات، المعلومات، المعرفة</h3>
+        <div class="grid-2">
+          <div class="prop-card">
+            <h4>📊 البيانات (Data)</h4>
+            <p>حقائق تُمثَّل باستخدام الأرقام أو الأحرف أو الرموز، بدون تحليل أو تفسير.</p>
+          </div>
+          <div class="prop-card">
+            <h4>💡 المعلومات (Information)</h4>
+            <p>معنى أو قيمة تصل للمتلقي وتُستخدم لاتخاذ القرار. وعكس الأشياء المادية، ليس لها شكل أو كيان ثابت.</p>
+          </div>
+          <div class="prop-card">
+            <h4>🧠 المعرفة (Knowledge)</h4>
+            <p>المعلومات التي تم تحليلها وتنظيمها بشكل منهجي للمساعدة في حل المشكلات.</p>
+          </div>
+          <div class="prop-card">
+            <h4>🔍 التحقق المتبادل (Cross-checking)</h4>
+            <p>مقارنة المعلومات التي نحصل عليها من مصادر متعددة مع بعضها لتحديد مدى دقتها وموثوقيتها.</p>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;"><span class="ico">⚡</span> خصائص المعلومات</h3>
+        <table class="data-table">
+          <tr><th>الخاصية</th><th>الوصف</th></tr>
+          <tr><td class="term">الاستمرارية (Persistence)</td><td>بمجرد إنشاء المعلومات، لا يمكن محوها بالكامل.</td></tr>
+          <tr><td class="term">قابلية التكرار (Reproducibility)</td><td>إمكانية نسخ المعلومات بسهولة وبكميات كبيرة.</td></tr>
+          <tr><td class="term">الانتشار (Propagation)</td><td>من السهل توصيل المعلومات ونشرها بسرعة عبر وسائل الإعلام الجماهيرية.</td></tr>
+        </table>
+
+        <div class="note-box info">
+          <span class="ico">ℹ️</span>
+          <div><strong>تذكّر</strong> على عكس الأشياء المادية، المعلومات ليس لها شكل ملموس ثابت — وهذه هي أهم خاصية تُميزها.</div>
+        </div>
+
+        <h3 style="margin-top:22px;"><span class="ico">🗂️</span> المعلومات الأولية والثانوية</h3>
+        <div class="grid-2">
+          <div class="prop-card">
+            <h4>🔬 معلومات أولية (Primary)</h4>
+            <p>يتم الحصول عليها من خلال التجربة الشخصية المباشرة أو البحث والتجارب. <br><em>مثال: تقارير التجارب، نتائج الاستطلاعات.</em></p>
+          </div>
+          <div class="prop-card">
+            <h4>📰 معلومات ثانوية (Secondary)</h4>
+            <p>لا تُحصَّل بشكل مباشر، بل من خلال طرف ثالث. <br><em>مثال: الكتب، الصحف، التلفزيون.</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="ico">📡</span> ب. الوسائط (Media)</h3>
+        <p>الوسائط هي وسائل لنقل المعلومات إلى عدد من الأفراد.</p>
+        <table class="data-table">
+          <tr><th>الاسم</th><th>المحتوى</th><th>مثال</th></tr>
+          <tr><td class="term">وسائط الإعلام التعبيرية</td><td>وسيلة للتعبير عن المعلومات</td><td>النص، الصور، الصوت، الفيديو</td></tr>
+          <tr><td class="term">وسائط النقل / الإرسال</td><td>وسيط لنقل وتبادل المعلومات</td><td>التلفزيون، الراديو، الصحف، الهاتف، الإنترنت</td></tr>
+          <tr><td class="term">وسائط التسجيل</td><td>لتسجيل وتخزين المعلومات</td><td>الورق، أقراص USB، أقراص DVD، التخزين السحابي</td></tr>
+        </table>
+        <div class="note-box warn">
+          <span class="ico">🎯</span>
+          <div><strong>الثقافة الإعلامية (Media literacy)</strong> القدرة على تفسير المعلومات التي تم الحصول عليها من الوسائط بدقة.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---------- الدرس الثاني ---------- -->
+    <div class="lesson-block">
+      <div class="lesson-head">
+        <div class="num">2</div>
+        <h2>أخلاقيات المعلومات</h2>
+      </div>
+
+      <div class="card">
+        <h3><span class="ico">⚖️</span> أ. أخلاقيات المعلومات</h3>
+        <p><strong class="term">أخلاقيات المعلومات (Information Ethics):</strong> المفاهيم والتوجهات الأساسية اللازمة للقيام بأنشطة مناسبة في مجتمع المعلومات، بغض النظر عن وجود قوانين تُلزم بذلك أم لا.</p>
+
+        <h3 style="margin-top:18px;"><span class="ico">🚫</span> نقاط يجب مراعاتها عند نشر المعلومات</h3>
+        <div class="ethics-list">
+          <div class="ethics-item"><span class="x">✕</span><span>لا يجوز مشاركة الصور أو مقاطع الفيديو التي يمتلكها الآخرون دون الحصول على إذن.</span></div>
+          <div class="ethics-item"><span class="x">✕</span><span>لا يجب تسريب المعلومات الشخصية لشخص آخر على الإنترنت.</span></div>
+          <div class="ethics-item"><span class="x">✕</span><span>لا يجوز مشاركة محتوى يحتفظ الآخرون بحقوق المؤلف (Copyright) عليه دون إذن.</span></div>
+          <div class="ethics-item"><span class="x">✕</span><span>لا يجب انتهاك خصوصية الآخرين.</span></div>
+          <div class="ethics-item"><span class="x">✕</span><span>لا يجب نشر تعليقات تشهير بالآخرين أو الانخراط في التنمر الإلكتروني (Cyber bullying).</span></div>
+        </div>
+
+        <div class="note-box danger">
+          <span class="ico">📍</span>
+          <div><strong>العلامة الجغرافية (Geotagging)</strong> معلومات تتضمن خطوط الطول والعرض مضمنة تلقائيًا في الصور ومقاطع الفيديو الملتقطة بالهواتف الذكية. قد تكشف عن موقع منزلك دون قصد.</div>
+        </div>
+
+        <div class="note-box warn">
+          <span class="ico">📢</span>
+          <div><strong>المعلومات المضللة والشائعات (Disinformation and rumors)</strong> معلومات كاذبة يتم نشرها عمدًا، أو شائعات لا أساس لها من الصحة.</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><span class="ico">📱</span> ب. المشاكل مع الهواتف الذكية ووسائل التواصل الاجتماعي</h3>
+        <p><strong class="term">وسائل التواصل الاجتماعي (Social media):</strong> خدمات توفر منصات يمكن للأفراد من خلالها التواصل مع بعضهم البعض على الإنترنت.</p>
+        <div class="chip-list">
+          <span class="chip">💻 إدمان الإنترنت</span>
+          <span class="chip">🚶 استخدام الهاتف أثناء المشي</span>
+          <span class="chip">🕵️ الجريمة الإلكترونية</span>
+          <span class="chip">🎭 انتحال الشخصية</span>
+          <span class="chip">🔓 تسريب المعلومات الشخصية</span>
+        </div>
+        <table class="data-table" style="margin-top:14px;">
+          <tr><th>المشكلة</th><th>التعريف</th></tr>
+          <tr><td class="term">إدمان الإنترنت</td><td>الانغماس المفرط في الإنترنت لدرجة تعطيل الحياة اليومية.</td></tr>
+          <tr><td class="term">استخدام الهاتف أثناء المشي</td><td>استخدام الهاتف الذكي أثناء المشي، وهو سلوك خطير.</td></tr>
+          <tr><td class="term">الجريمة الإلكترونية</td><td>إساءة استخدام أجهزة الكمبيوتر والشبكات في أنشطة إجرامية.</td></tr>
+          <tr><td class="term">انتحال الشخصية</td><td>قيام شخص بانتحال شخصية فرد أو مؤسسة لسرقة الهويات أو كلمات المرور.</td></tr>
+          <tr><td class="term">تسريب المعلومات الشخصية</td><td>الكشف عن معلومات شخصية يجب أن تظل سرية لطرف ثالث.</td></tr>
+        </table>
+        <div class="note-box info">
+          <span class="ico">🏢</span>
+          <div><strong>أخلاقيات المعلومات في العمل</strong> قد تكون الرسومات الهندسية وبيانات الإنتاج سرية، لذا يجب عدم نشرها على وسائل التواصل الاجتماعي أو مشاركتها خارج الشركة دون إذن.</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ======================= قسم المراجعة ======================= -->
+  <section class="view" id="view-review">
+    <div class="hero" style="background:linear-gradient(120deg, var(--teal-dark), var(--teal));">
+      <h2>📝 المراجعة</h2>
+      <p>اختبر فهمك للدرس عبر أربعة أنواع من الأسئلة. أجب أولًا، ثم اضغط «إظهار الإجابة الصحيحة» للتأكد من فهمك.</p>
+    </div>
+
+    <div class="review-tabs" id="reviewTabs">
+      <button data-set="tf" class="active">✅ صح أم خطأ</button>
+      <button data-set="mc">🔘 اختيار من متعدد</button>
+      <button data-set="fill">✏️ أكمل الفراغ</button>
+      <button data-set="short">🗣️ إجابة قصيرة</button>
+    </div>
+
+    <div class="review-set active" id="set-tf"></div>
+    <div class="review-set" id="set-mc"></div>
+    <div class="review-set" id="set-fill"></div>
+    <div class="review-set" id="set-short"></div>
+  </section>
+
+  <!-- ======================= قسم الاختبار ======================= -->
+  <section class="view" id="view-quiz">
+
+    <div id="quiz-registration" class="reg-wrap">
+      <div class="ico-big">🎓</div>
+      <h2>سجّل بياناتك لبدء الاختبار</h2>
+      <p>يجب إدخال اسمك قبل بدء الاختبار. سيُحسب الوقت المستغرق وتُسجَّل نتيجتك تلقائيًا.</p>
+      <input type="text" id="studentName" placeholder="اكتب اسمك الكامل هنا">
+      <div class="field-error" id="nameError"></div>
+      <button class="primary-btn" id="startQuizBtn">بدء الاختبار</button>
+    </div>
+
+    <div id="quiz-active" style="display:none;">
+      <div class="quiz-hud">
+        <div class="stu">👤 <span id="hudName"></span></div>
+        <div class="timer">⏱️ <span id="hudTimer">00:00</span></div>
+      </div>
+      <div class="progress-bar"><div id="quizProgress"></div></div>
+      <div id="quizQuestionArea"></div>
+      <div class="quiz-nav">
+        <button class="ghost-btn" id="prevBtn">◀ السابق</button>
+        <span id="qCounter" style="align-self:center; font-family:'Cairo'; color:var(--ink-soft); font-weight:700;"></span>
+        <button class="primary-btn" style="width:auto;" id="nextBtn">التالي ▶</button>
+      </div>
+    </div>
+
+    <div id="quiz-result" style="display:none;"></div>
+
+  </section>
+
+</main>
+
+<footer class="site-footer">دراسة المعلومات · الوحدة الأولى · منصة تعليمية تفاعلية</footer>
+
+<script>
+/* ============================================================
+   طبقة تخزين آمنة: تحاول استخدام localStorage، وإن تعذر ذلك
+   (كما في بعض بيئات المعاينة) تستخدم الذاكرة المؤقتة للجلسة
+   بحيث لا يتعطل الموقع أبدًا.
+   ============================================================ */
+const safeStorage = (function () {
+  let memoryStore = {};
+  let storageAvailable = false;
+  try {
+    const testKey = "__test__";
+    window.localStorage.setItem(testKey, "1");
+    window.localStorage.removeItem(testKey);
+    storageAvailable = true;
+  } catch (e) {
+    storageAvailable = false;
+  }
+  return {
+    get(key) {
+      if (storageAvailable) {
+        try { return window.localStorage.getItem(key); } catch (e) { /* fallback */ }
+      }
+      return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
+    },
+    set(key, value) {
+      if (storageAvailable) {
+        try { window.localStorage.setItem(key, value); return; } catch (e) { /* fallback */ }
+      }
+      memoryStore[key] = value;
+    }
+  };
+})();
+
+/* ============================================================
+   التنقل بين الأقسام الرئيسية (الشرح / المراجعة / الاختبار)
+   ============================================================ */
+document.getElementById('mainTabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  document.querySelectorAll('#mainTabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('section.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + btn.dataset.view).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+/* ============================================================
+   قسم المراجعة — بيانات الأسئلة
+   ============================================================ */
+const tfQuestions = [
+  {q:"البيانات هي حقائق تُمثَّل باستخدام الأرقام أو الأحرف أو الرموز.", a:true, why:"هذا هو التعريف الدقيق للبيانات (Data) كما ورد في الدرس."},
+  {q:"للمعلومات شكل مادي وكيان ثابت مثل الأشياء الملموسة.", a:false, why:"على عكس الأشياء المادية، المعلومات ليس لها شكل أو كيان ثابت."},
+  {q:"بمجرد نشر معلومة على الإنترنت، من الصعب جدًا محوها بالكامل.", a:true, why:"هذه هي خاصية الاستمرارية (Persistence): بمجرد إنشاء المعلومات لا يمكن محوها بالكامل."},
+  {q:"المعلومات الثانوية يتم الحصول عليها من خلال التجربة الشخصية المباشرة.", a:false, why:"هذا تعريف المعلومات الأولية. أما الثانوية فتُؤخذ من طرف ثالث كالكتب والتلفزيون."},
+  {q:"يجوز مشاركة صورة يملكها شخص آخر على الإنترنت دون إذنه ما دام الهدف تعليميًا.", a:false, why:"لا يجوز مشاركة صور أو مقاطع فيديو يملكها الآخرون دون الحصول على إذن، أيًا كان الغرض."},
+  {q:"الثقافة الإعلامية هي القدرة على تفسير المعلومات التي تم الحصول عليها من الوسائط بدقة.", a:true, why:"هذا هو التعريف الدقيق للثقافة الإعلامية (Media literacy)."},
+];
+
+const mcQuestions = [
+  {q:"خاصية المعلومات التي تعني إمكانية نسخها بسهولة وبكميات كبيرة تسمى:",
+   options:["الاستمرارية","قابلية التكرار","الانتشار","الثبات"], correct:1,
+   why:"قابلية التكرار (Reproducibility) هي القدرة على نسخ المعلومات بسهولة وبكميات كبيرة."},
+  {q:"الوسائط المستخدمة لتسجيل وتخزين المعلومات مثل أقراص USB والتخزين السحابي تسمى:",
+   options:["وسائط تعبيرية","وسائط نقل/إرسال","وسائط تسجيل","وسائط أولية"], correct:2,
+   why:"وسائط التسجيل (Recording media) تُستخدم لتسجيل المعلومات وتخزينها، مثل الورق والأقراص والتخزين السحابي."},
+  {q:"معلومات كاذبة يتم نشرها عمدًا أو شائعات لا أساس لها تسمى:",
+   options:["العلامة الجغرافية","المعلومات المضللة والشائعات","الثقافة الإعلامية","البيانات الأولية"], correct:1,
+   why:"هذا هو التعريف الدقيق للمعلومات المضللة والشائعات (Disinformation and rumors)."},
+  {q:"عندما ينغمس شخص في الإنترنت بشكل مفرط لدرجة تعطيل حياته اليومية، يُسمى ذلك:",
+   options:["الجريمة الإلكترونية","انتحال الشخصية","إدمان الإنترنت","التنمر الإلكتروني"], correct:2,
+   why:"إدمان الإنترنت (Internet addiction) هو الحالة التي يصبح فيها الشخص منغمسًا بشكل مفرط في الإنترنت إلى درجة تعطيل حياته اليومية."},
+  {q:"المعلومات التي يتم الحصول عليها من خلال التجربة الشخصية المباشرة أو البحث والتجارب تسمى معلومات:",
+   options:["ثانوية","أولية","مضللة","تعبيرية"], correct:1,
+   why:"المعلومات الأولية (Primary information) هي التي يتم الحصول عليها من التجربة الشخصية المباشرة أو البحث والتجارب."},
+];
+
+const fillQuestions = [
+  {q:"..... هي معنى أو قيمة تصل للمتلقي وتُستخدم لاتخاذ القرار.", a:"المعلومات", why:"هذا هو تعريف المعلومات (Information) بالتحديد."},
+  {q:"عملية مقارنة المعلومات من مصادر متعددة لتحديد مدى دقتها وموثوقيتها تُسمى .....", a:"التحقق المتبادل", why:"يُطلق على هذه العملية اسم التحقق المتبادل (Cross-checking)."},
+  {q:"المعلومات التي يحصل عليها الشخص من خلال طرف ثالث كالكتب والتلفزيون تُسمى معلومات .....", a:"ثانوية", why:"لأنها لا تُحصَّل بشكل مباشر بل عبر وسيط أو طرف ثالث، فهي معلومات ثانوية (Secondary information)."},
+  {q:"معلومات تتضمن خطوط الطول والعرض مضمّنة في الصور الملتقطة بالهواتف الذكية تُسمى .....", a:"العلامة الجغرافية", why:"هذا هو تعريف العلامة الجغرافية (Geotagging)."},
+  {q:"خدمات توفر منصات يمكن للأفراد من خلالها التواصل مع بعضهم البعض على الإنترنت تُسمى .....", a:"وسائل التواصل الاجتماعي", why:"هذا هو تعريف وسائل التواصل الاجتماعي (Social media)."},
+];
+
+const shortQuestions = [
+  {q:"ما الفرق بين المعلومات الأولية والمعلومات الثانوية؟ اذكر مثالًا لكل منهما.",
+   why:"المعلومات الأولية تُحصَّل مباشرة من التجربة الشخصية أو البحث (مثل نتائج استطلاع أجريته بنفسك)، بينما المعلومات الثانوية تُؤخذ من طرف ثالث (مثل خبر قرأته في صحيفة)."},
+  {q:"اذكر ثلاثًا من خصائص المعلومات مع شرح مبسط لكل خاصية.",
+   why:"الاستمرارية: لا يمكن محو المعلومة بالكامل بعد نشرها. قابلية التكرار: يمكن نسخها بسهولة بكميات كبيرة. الانتشار: تنتقل بسرعة عبر وسائل الإعلام والإنترنت."},
+  {q:"عدد اثنتين من المشاكل الشائعة المرتبطة باستخدام الهواتف الذكية ووسائل التواصل الاجتماعي.",
+   why:"من الأمثلة: إدمان الإنترنت، استخدام الهاتف أثناء المشي، الجريمة الإلكترونية، انتحال الشخصية، أو تسريب المعلومات الشخصية."},
+  {q:"لماذا يجب توخي الحذر عند نشر صور التُقطت بالهاتف الذكي على الإنترنت؟",
+   why:"لأن هذه الصور قد تحتوي على علامة جغرافية (Geotagging) تكشف موقع التقاطها، مما قد يؤدي إلى الكشف عن عنوان منزلك أو أماكنك المعتادة دون قصد."},
+];
+
+/* بناء واجهة قسم "صح أم خطأ" */
+function buildTF() {
+  const wrap = document.getElementById('set-tf');
+  tfQuestions.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = `
+      <div class="q-title"><span class="qn">${i+1}</span><span>${item.q}</span></div>
+      <div class="tf-options">
+        <button class="opt-btn" data-val="true">✔ صح</button>
+        <button class="opt-btn" data-val="false">✘ خطأ</button>
+      </div>
+      <button class="show-answer-btn">إظهار الإجابة الصحيحة</button>
+      <div class="answer-reveal">
+        <span class="lbl">الإجابة الصحيحة: ${item.a ? "صح ✔" : "خطأ ✘"}</span>
+        <div class="why">${item.why}</div>
+      </div>
+    `;
+    const opts = card.querySelectorAll('.opt-btn');
+    opts.forEach(btn => btn.addEventListener('click', () => {
+      opts.forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+    }));
+    card.querySelector('.show-answer-btn').addEventListener('click', () => {
+      card.querySelector('.answer-reveal').classList.toggle('show');
+    });
+    wrap.appendChild(card);
+  });
+}
+
+/* بناء واجهة قسم "اختيار من متعدد" */
+function buildMC() {
+  const wrap = document.getElementById('set-mc');
+  mcQuestions.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    const optsHtml = item.options.map((op, idx) =>
+      `<button class="opt-btn" data-idx="${idx}">${op}</button>`).join('');
+    card.innerHTML = `
+      <div class="q-title"><span class="qn">${i+1}</span><span>${item.q}</span></div>
+      <div class="mc-options">${optsHtml}</div>
+      <button class="show-answer-btn">إظهار الإجابة الصحيحة</button>
+      <div class="answer-reveal">
+        <span class="lbl">الإجابة الصحيحة: ${item.options[item.correct]}</span>
+        <div class="why">${item.why}</div>
+      </div>
+    `;
+    const opts = card.querySelectorAll('.opt-btn');
+    opts.forEach(btn => btn.addEventListener('click', () => {
+      opts.forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+    }));
+    card.querySelector('.show-answer-btn').addEventListener('click', () => {
+      card.querySelector('.answer-reveal').classList.toggle('show');
+    });
+    wrap.appendChild(card);
+  });
+}
+
+/* بناء واجهة قسم "أكمل الفراغ" */
+function buildFill() {
+  const wrap = document.getElementById('set-fill');
+  fillQuestions.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = `
+      <div class="q-title"><span class="qn">${i+1}</span><span>${item.q}</span></div>
+      <input type="text" class="fill-input" placeholder="اكتب إجابتك هنا...">
+      <button class="show-answer-btn">إظهار الإجابة الصحيحة</button>
+      <div class="answer-reveal">
+        <span class="lbl">الإجابة الصحيحة: ${item.a}</span>
+        <div class="why">${item.why}</div>
+      </div>
+    `;
+    card.querySelector('.show-answer-btn').addEventListener('click', () => {
+      card.querySelector('.answer-reveal').classList.toggle('show');
+    });
+    wrap.appendChild(card);
+  });
+}
+
+/* بناء واجهة قسم "إجابة قصيرة" */
+function buildShort() {
+  const wrap = document.getElementById('set-short');
+  shortQuestions.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'q-card';
+    card.innerHTML = `
+      <div class="q-title"><span class="qn">${i+1}</span><span>${item.q}</span></div>
+      <textarea class="short-input" placeholder="اكتب إجابتك هنا..."></textarea>
+      <button class="show-answer-btn">إظهار الإجابة النموذجية</button>
+      <div class="answer-reveal">
+        <span class="lbl">إجابة نموذجية:</span>
+        <div class="why">${item.why}</div>
+      </div>
+    `;
+    card.querySelector('.show-answer-btn').addEventListener('click', () => {
+      card.querySelector('.answer-reveal').classList.toggle('show');
+    });
+    wrap.appendChild(card);
+  });
+}
+
+buildTF(); buildMC(); buildFill(); buildShort();
+
+/* التبديل بين أنواع أسئلة المراجعة */
+document.getElementById('reviewTabs').addEventListener('click', (e) => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  document.querySelectorAll('#reviewTabs button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.review-set').forEach(s => s.classList.remove('active'));
+  document.getElementById('set-' + btn.dataset.set).classList.add('active');
+});
+
+/* ============================================================
+   قسم الاختبار
+   ============================================================ */
+const quizBank = [
+  {q:"ما المصطلح الذي يطلق على الحقائق المُمثَّلة بالأرقام أو الأحرف أو الرموز؟",
+   options:["المعرفة","البيانات","المعلومات","الوسائط"], correct:1},
+  {q:"أي مما يلي هو تعريف «المعرفة» (Knowledge)؟",
+   options:["حقائق خام غير محللة","معلومات تم تحليلها وتنظيمها لحل المشكلات","وسيلة لنقل المعلومات","معلومة كاذبة"], correct:1},
+  {q:"خاصية «الانتشار» في المعلومات تعني:",
+   options:["يمكن نسخها بسهولة","لا يمكن محوها كليًا","تنتقل بسهولة وسرعة عبر وسائل الإعلام","لها شكل مادي"], correct:2},
+  {q:"مثال على وسائط النقل/الإرسال هو:",
+   options:["الورق","التلفزيون","القرص الصلب","التخزين السحابي"], correct:1},
+  {q:"القدرة على تفسير المعلومات المُستقاة من الوسائط بدقة تُسمى:",
+   options:["أخلاقيات المعلومات","الثقافة الإعلامية","العلامة الجغرافية","التحقق المتبادل"], correct:1},
+  {q:"مشاركة صورة يملكها شخص آخر دون إذنه تُعد مخالفة لـ:",
+   options:["حقوق المؤلف","إدمان الإنترنت","الثقافة الإعلامية","الوسائط التعبيرية"], correct:0},
+  {q:"معلومات خطوط الطول والعرض المضمّنة تلقائيًا في صور الهاتف الذكي تُسمى:",
+   options:["حقوق الملكية","العلامة الجغرافية","المعلومات الثانوية","التحقق المتبادل"], correct:1},
+  {q:"إساءة استخدام أجهزة الكمبيوتر والشبكات في أنشطة إجرامية تُسمى:",
+   options:["انتحال الشخصية","الجريمة الإلكترونية","التنمر الإلكتروني","تسريب المعلومات"], correct:1},
+  {q:"قيام شخص بانتحال هوية فرد آخر لسرقة كلمات المرور يُسمى:",
+   options:["انتحال الشخصية","إدمان الإنترنت","الاستمرارية","الانتشار"], correct:0},
+  {q:"أي العبارات التالية صحيحة بخصوص نشر المعلومات على الإنترنت؟",
+   options:["يمكن نشر أي معلومة دون قلق لأنها ستختفي لاحقًا","يجب التأكد من عدم انتهاك خصوصية الآخرين قبل النشر","لا داعي للحصول على إذن لمشاركة صور الآخرين","النشر المجهول يعفي من المسؤولية"], correct:1},
+];
+
+let quizState = { current:0, answers:new Array(quizBank.length).fill(null), timerInterval:null, seconds:0, name:"" };
+
+document.getElementById('startQuizBtn').addEventListener('click', () => {
+  const nameInput = document.getElementById('studentName');
+  const name = nameInput.value.trim();
+  const errorEl = document.getElementById('nameError');
+  if (name === "") {
+    errorEl.textContent = "⚠ الرجاء إدخال اسمك قبل بدء الاختبار.";
+    nameInput.focus();
+    return;
+  }
+  errorEl.textContent = "";
+  quizState.name = name;
+  safeStorage.set('lastQuizStudentName', name);
+
+  document.getElementById('quiz-registration').style.display = 'none';
+  document.getElementById('quiz-active').style.display = 'block';
+  document.getElementById('hudName').textContent = name;
+
+  quizState.seconds = 0;
+  quizState.timerInterval = setInterval(() => {
+    quizState.seconds++;
+    const m = String(Math.floor(quizState.seconds/60)).padStart(2,'0');
+    const s = String(quizState.seconds%60).padStart(2,'0');
+    document.getElementById('hudTimer').textContent = `${m}:${s}`;
+  }, 1000);
+
+  renderQuizQuestion();
+});
+
+function renderQuizQuestion() {
+  const idx = quizState.current;
+  const item = quizBank[idx];
+  const area = document.getElementById('quizQuestionArea');
+  const optsHtml = item.options.map((op, i) => {
+    const sel = quizState.answers[idx] === i ? 'selected' : '';
+    return `<button class="opt-btn ${sel}" data-idx="${i}">${op}</button>`;
+  }).join('');
+  area.innerHTML = `
+    <div class="q-card">
+      <div class="q-title"><span class="qn">${idx+1}</span><span>${item.q}</span></div>
+      <div class="mc-options">${optsHtml}</div>
+    </div>
+  `;
+  area.querySelectorAll('.opt-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      quizState.answers[idx] = parseInt(btn.dataset.idx);
+      area.querySelectorAll('.opt-btn').forEach(o => o.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  document.getElementById('qCounter').textContent = `${idx+1} / ${quizBank.length}`;
+  document.getElementById('quizProgress').style.width = `${((idx+1)/quizBank.length)*100}%`;
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').textContent = idx === quizBank.length - 1 ? "إنهاء الاختبار ✔" : "التالي ▶";
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (quizState.current > 0) { quizState.current--; renderQuizQuestion(); }
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (quizState.current < quizBank.length - 1) {
+    quizState.current++;
+    renderQuizQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+
+function finishQuiz() {
+  clearInterval(quizState.timerInterval);
+  let correctCount = 0;
+  const rows = quizBank.map((item, i) => {
+    const userAns = quizState.answers[i];
+    const isCorrect = userAns === item.correct;
+    if (isCorrect) correctCount++;
+    return `
+      <div class="result-row">
+        <span>${i+1}. ${item.q}</span>
+        <span class="${isCorrect ? 'badge-correct' : 'badge-wrong'}">
+          ${isCorrect ? 'إجابة صحيحة ✔' : (userAns === null ? 'لم تُجب ✘' : 'إجابة خاطئة ✘')}
+        </span>
+      </div>`;
+  }).join('');
+
+  const pct = Math.round((correctCount/quizBank.length)*100);
+  const m = String(Math.floor(quizState.seconds/60)).padStart(2,'0');
+  const s = String(quizState.seconds%60).padStart(2,'0');
+
+  /* حفظ آخر نتيجة عبر طبقة التخزين الآمنة */
+  safeStorage.set('lastQuizResult', JSON.stringify({
+    name: quizState.name, score: correctCount, total: quizBank.length,
+    time: `${m}:${s}`, date: new Date().toISOString()
+  }));
+
+  document.getElementById('quiz-active').style.display = 'none';
+  const resultEl = document.getElementById('quiz-result');
+  resultEl.style.display = 'block';
+  resultEl.innerHTML = `
+    <div class="result-wrap">
+      <h2 style="margin-bottom:4px;">نتيجة الاختبار</h2>
+      <p style="color:var(--ink-soft); margin-bottom:20px;">أحسنت يا ${quizState.name}! إليك نتيجتك:</p>
+      <div class="score-ring" style="--pct:${pct};">
+        <div class="val">${correctCount}/${quizBank.length}</div>
+        <div class="lbl2">${pct}%</div>
+      </div>
+      <p style="color:var(--ink-soft);">⏱️ الوقت المستغرق: <b style="color:var(--ink); font-family:'Cairo';">${m}:${s}</b></p>
+      <div class="result-detail">${rows}</div>
+      <button class="primary-btn" style="margin-top:22px;" id="retryQuizBtn">إعادة الاختبار</button>
+    </div>
+  `;
+  document.getElementById('retryQuizBtn').addEventListener('click', () => {
+    quizState = { current:0, answers:new Array(quizBank.length).fill(null), timerInterval:null, seconds:0, name:"" };
+    resultEl.style.display = 'none';
+    document.getElementById('quiz-registration').style.display = 'block';
+    document.getElementById('studentName').value = '';
+  });
+}
+
+/* تعبئة اسم الطالب تلقائيًا إن وُجد في التخزين */
+window.addEventListener('DOMContentLoaded', () => {
+  const savedName = safeStorage.get('lastQuizStudentName');
+  if (savedName) document.getElementById('studentName').value = savedName;
+});
+</script>
+</body>
+</html>

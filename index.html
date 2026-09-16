@@ -444,14 +444,17 @@ textarea.form-input{min-height:80px;resize:vertical}
 </div>
 
 <script>
+<script>
 // ============================================================
 // 🔗 رابط الـ Web App الخاص بك
 // ============================================================
 const API = "https://script.google.com/macros/s/AKfycbzmQbCzum-osbR-rbOheHK2dcOPusP3uEkYVKihqZKnTl7FtJirMGCmnKC39oz1G7iz/exec";
 
+// ===== State (حالة التطبيق) =====
 let D = { students: [], questions: [], results: [], settings: { password:'teacher123', timePerQuestion:120, questionsPerStudent:5 } };
 let quiz = { name:'', qs:[], idx:0, correct:0, wrong:0, details:[], sel:null, answered:false, timer:null, timeLeft:120 };
 
+// ===== API Calls (الاتصال بقاعدة البيانات) =====
 async function api(action, extra={}) {
   try {
     if (['getAll','getStudents','getQuestions','getResults','getSettings'].includes(action)) {
@@ -479,17 +482,25 @@ async function loadAllData() {
     if (!D.settings.timePerQuestion) D.settings.timePerQuestion = 120;
     if (!D.settings.questionsPerStudent) D.settings.questionsPerStudent = 5;
     if (!D.settings.password) D.settings.password = 'teacher123';
-    renderStudents(); renderQuestions(); renderSettings(); renderResults();
+    
+    renderStudents(); 
+    renderQuestions(); 
+    renderSettings(); 
+    renderResults();
     populateStudentSelect();
+    
     toast('✅ تم تحديث البيانات بنجاح', 'success');
   } else {
     toast('❌ فشل تحميل البيانات', 'error');
   }
 }
 
+// ===== UI Utilities (أدوات الواجهة) =====
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active', 'block'));
+  const target = document.getElementById(id);
+  target.classList.add('active');
+  if(id === 'adminScreen' || id === 'quizScreen') target.classList.add('block');
 }
 
 function toast(msg, type='') {
@@ -504,6 +515,14 @@ function closeModal(id) {
   document.getElementById(id).classList.remove('show');
 }
 
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===== Authentication (تسجيل الدخول) =====
 async function loginTeacher() {
   await loadAllData();
   const p = document.getElementById('passInput').value;
@@ -520,14 +539,9 @@ function loginStudent() {
   loadAllData().then(() => showScreen('studentSelectScreen'));
 }
 
-function switchTab(name, btn) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('tab-' + name).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ===== Students Management =====
+// ==========================================
+// ===== Students Management (إدارة الطلاب) =====
+// ==========================================
 function renderStudents() {
   const tb = document.getElementById('stuTable');
   document.getElementById('stuCount').textContent = D.students.length;
@@ -542,12 +556,14 @@ function renderStudents() {
     </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;color:var(--ink-dim)">لا يوجد طلاب مضافين</td></tr>';
 }
 
+// إضافة طالب واحد
 function openStudentModal(id='', name='') {
   document.getElementById('stuEditId').value = id;
   document.getElementById('stuNameInput').value = name;
   document.getElementById('stuModalTitle').textContent = id ? '✏️ تعديل طالب' : '➕ إضافة طالب';
   document.getElementById('stuModal').classList.add('show');
 }
+
 function editStudent(id, name) { openStudentModal(id, name); }
 
 async function saveStudent() {
@@ -564,7 +580,38 @@ async function deleteStudent(id) {
   if (r.success) { await loadAllData(); toast('✅ تم الحذف', 'success'); }
 }
 
-// ===== Questions Management =====
+// 📌 إضافة قائمة طلاب دفعة واحدة (الميزة الجديدة)
+function openBulkStudentModal() {
+  document.getElementById('bulkStuNamesInput').value = '';
+  document.getElementById('bulkStuModal').classList.add('show');
+}
+
+async function saveBulkStudents() {
+  const text = document.getElementById('bulkStuNamesInput').value;
+  // استخراج الأسماء وحذف الأسطر الفارغة
+  const namesList = text.split('\n').map(name => name.trim()).filter(name => name.length > 0);
+
+  if (namesList.length === 0) {
+    return toast('⚠️ يرجى كتابة اسم طالب واحد على الأقل', 'error');
+  }
+
+  toast(`⏳ جارِ حفظ ${namesList.length} طالب إلى قاعدة البيانات...`);
+  
+  // نستخدم دالة importData الموجودة مسبقاً في Backend لاستقبال مصفوفة الطلاب دفعة واحدة
+  const r = await api('importData', { students: namesList });
+
+  if (r.success) {
+    closeModal('bulkStuModal');
+    await loadAllData();
+    toast(`🎉 تم إضافة ${namesList.length} طالب بنجاح!`, 'success');
+  } else {
+    toast('❌ حدث خطأ أثناء الحفظ', 'error');
+  }
+}
+
+// ==========================================
+// ===== Questions Management (إدارة الأسئلة) =====
+// ==========================================
 const typeLabels = { mcq:'اختيار من متعدد', tf:'صح أو خطأ', fill:'أكمل الفراغ', short:'إجابة قصيرة' };
 
 function renderQuestions() {
@@ -651,7 +698,9 @@ async function deleteQuestion(id) {
   if (r.success) { await loadAllData(); toast('✅ تم الحذف', 'success'); }
 }
 
-// ===== Settings Management =====
+// ==========================================
+// ===== Settings Management (الإعدادات) =====
+// ==========================================
 function renderSettings() {
   document.getElementById('setPass').value = D.settings.password || 'teacher123';
   document.getElementById('setTime').value = D.settings.timePerQuestion || 120;
@@ -668,7 +717,9 @@ async function saveSettings() {
   if (r.success) { D.settings = s; toast('✅ تم حفظ الإعدادات', 'success'); }
 }
 
-// ===== Results Management =====
+// ==========================================
+// ===== Results Management (النتائج) =====
+// ==========================================
 function getGrade(p) {
   if (p >= 80) return { l:'ممتاز 🌟', c:'g-excellent' };
   if (p >= 60) return { l:'جيد جداً', c:'g-verygood' };
@@ -683,11 +734,13 @@ function renderResults() {
   const total = ranked.length;
   const avg = total ? Math.round(ranked.reduce((s, r) => s + r.score, 0) / total) : 0;
   const pass = ranked.filter(r => r.score >= 50).length;
+  
   document.getElementById('resStats').innerHTML = `
     <div class="stat-card"><div class="v">${total}</div><div class="l">عدد المشاركين</div></div>
     <div class="stat-card"><div class="v">${avg}%</div><div class="l">المتوسط</div></div>
     <div class="stat-card"><div class="v">${total ? ranked[0].score : 0}%</div><div class="l">أعلى درجة</div></div>
     <div class="stat-card"><div class="v">${total ? Math.round(pass/total*100) : 0}%</div><div class="l">نسبة النجاح</div></div>`;
+    
   document.getElementById('resTable').innerHTML = ranked.map((r, i) => {
     const g = getGrade(r.score);
     return `<tr>
@@ -699,7 +752,7 @@ function renderResults() {
 }
 
 async function clearAllResults() {
-  if (!confirm('هل تريد مسح جميع النتائج؟')) return;
+  if (!confirm('هل تريد مسح جميع النتائج؟ (لا يمكن التراجع)')) return;
   await api('clearResults');
   await loadAllData();
   toast('✅ تم مسح النتائج', 'success');
@@ -717,26 +770,36 @@ function exportCSV() {
   a.click();
 }
 
-// ===== Student Select =====
+// ==========================================
+// ===== Quiz Execution (منطقة الطالب) =====
+// ==========================================
 function populateStudentSelect() {
   const sel = document.getElementById('studentSelect');
   sel.innerHTML = '<option value="">-- اختر اسمك --</option>' +
     D.students.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
 }
 
-// ===== Student Quiz Execution =====
-function shuffle(a) { const b = [...a]; for (let i = b.length-1; i > 0; i--) { const j = Math.floor(Math.random()*(i+1)); [b[i],b[j]]=[b[j],b[i]]; } return b; }
+function shuffle(a) { 
+  const b = [...a]; 
+  for (let i = b.length-1; i > 0; i--) { 
+    const j = Math.floor(Math.random()*(i+1)); 
+    [b[i],b[j]]=[b[j],b[i]]; 
+  } 
+  return b; 
+}
 
 function startStudentQuiz() {
   const name = document.getElementById('studentSelect').value;
   if (!name) return toast('اختر اسمك أولاً', 'error');
   if (D.questions.length === 0) return toast('لا توجد أسئلة متاحة في البنك', 'error');
+  
   const count = Math.min(D.settings.questionsPerStudent || 5, D.questions.length);
   quiz = {
     name, qs: shuffle(D.questions).slice(0, count).map(materializeQ),
     idx: 0, correct: 0, wrong: 0, details: [], sel: null, answered: false, timer: null,
     timeLeft: D.settings.timePerQuestion || 120
   };
+  
   document.getElementById('qStudentName').textContent = name;
   document.getElementById('qStudentBanner').textContent = name;
   document.getElementById('qTotal').textContent = quiz.qs.length;
@@ -744,6 +807,7 @@ function startStudentQuiz() {
   loadQ();
 }
 
+// تحويل أسئلة أكمل الفراغ والإجابة القصيرة إلى اختيار من متعدد ذكي
 function materializeQ(q) {
   if (q.type === 'mcq' || q.type === 'tf') return q;
   const correct = String(q.answer);
@@ -756,7 +820,9 @@ function materializeQ(q) {
 
 function loadQ() {
   const q = quiz.qs[quiz.idx];
-  quiz.sel = null; quiz.answered = false;
+  quiz.sel = null; 
+  quiz.answered = false;
+  
   document.getElementById('qNum').textContent = quiz.idx + 1;
   document.getElementById('qOfLabel').textContent = `السؤال ${quiz.idx+1} من ${quiz.qs.length}`;
   document.getElementById('qTypeTag').textContent = typeLabels[q.type] || 'سؤال';
@@ -764,6 +830,7 @@ function loadQ() {
   document.getElementById('feedback').classList.remove('show','ok','bad');
   document.getElementById('submitBtn').style.display = 'inline-flex';
   document.getElementById('submitBtn').disabled = false;
+  
   buildAnswer(q);
   startTimer();
 }
@@ -771,6 +838,7 @@ function loadQ() {
 function buildAnswer(q) {
   const area = document.getElementById('answerArea');
   area.innerHTML = '';
+  
   if (q.type === 'mcq') {
     const letters = ['أ','ب','ج','د'];
     const grid = document.createElement('div');
@@ -819,9 +887,11 @@ function updateTimerUI() {
   const s = String(t%60).padStart(2,'0');
   const el = document.getElementById('timerNum');
   el.textContent = m + ':' + s;
+  
   const pct = t / (D.settings.timePerQuestion || 120) * 100;
   const fill = document.getElementById('timerFill');
   fill.style.width = pct + '%';
+  
   if (t <= 30) { el.classList.add('danger'); fill.classList.add('danger'); }
   else { el.classList.remove('danger'); fill.classList.remove('danger'); }
 }
@@ -837,6 +907,7 @@ function handleAnswer(timedOut) {
   quiz.answered = true;
   clearInterval(quiz.timer);
   document.getElementById('submitBtn').style.display = 'none';
+  
   const q = quiz.qs[quiz.idx];
   let ok = false, correctLabel = '';
 
@@ -897,39 +968,27 @@ async function finishQuiz() {
   toast('✅ تم حفظ النتيجة بنجاح', 'success');
 }
 
-// ===== زر شحن البيانات الأساسية التلقائي =====
+// ==========================================
+// ===== Seed Data (شحن بيانات افتراضية) =====
+// ==========================================
 async function importSeedData() {
   if (!confirm('هل تريد شحن قائمة الطلاب والأسئلة الافتراضية إلى قاعدة البيانات؟')) return;
   toast('⏳ جارِ شحن البيانات الأساسية...');
   
   const seedStudents = [
-    "احمد اسامة احمد عبدالله","احمد حجاج ابراهيم عبدالرازق","احمد عبدالله كمال جابر","سيف محمد محمد علي",
-    "عصام تامر محمد عبدالمنعم","محمد بدوي عبدالرسول مهدي","محمد صالح عبدالوهاب محمد","محمد محروس عبدالله حسين",
-    "محمد مفرح فتحي علي","مصطفي احمد عبدالحفيظ","معاذ رضا عبدالعظيم احمد","ياسر محروس عبدالله حسين",
-    "يوسف ايمن صاوي عبدالله","يوسف محمد عبدالله احمد","حبيبة محمد فتحي مهدي","حبيبة مدحت محمد هلال",
-    "حنين اشرف عبدالستار عمار","حنين كريم سيد احمد","رنا رفعت عيد فضل","شهد ايمن احمد هلال","عزة عمرو حمزة",
-    "فايزة تامر مرزوق عوض","مريم رمضان فتحي عبدالله","مريم صبري ابراهيم احمد","مريم محمود علي موسي",
-    "ملك محمد احمد عبدالله","مي عماد ممدوح حسين","ندا علي عاشور عبدالرسول"
+    "احمد اسامة احمد عبدالله","احمد حجاج ابراهيم عبدالرازق","احمد عبدالله كمال جابر",
+    "سيف محمد محمد علي","عصام تامر محمد عبدالمنعم"
   ];
 
   const seedQuestions = [
     {type:"mcq", q:"ما تعريف «البيانات» (Data)؟", options:["حقائق تُمثَّل باستخدام الأرقام أو الأحرف أو الرموز","معلومات تم تحليلها وتنظيمها","معنى أو قيمة للمتلقي تُستخدم لاتخاذ القرار","وسيلة لنقل المعلومات لعدد من الأفراد"], answer:0},
-    {type:"mcq", q:"ما تعريف «المعلومات» (Information)؟", options:["حقائق تُمثَّل بالأرقام فقط","معنى أو قيمة للمتلقي تُستخدم لاتخاذ القرار","وسيلة لنقل المعلومات إلى عدد من الأفراد","بيانات لم تتم معالجتها بعد"], answer:1},
-    {type:"mcq", q:"أي مما يلي ليس من خصائص المعلومات؟", options:["الاستمرارية (Persistence)","قابلية التكرار (Reproducibility)","الانتشار (Propagation)","أن لها شكلًا ماديًا ثابتًا"], answer:3},
-    {type:"mcq", q:"ما اسم خاصية المعلومات التي تعني أنها بمجرد إنشائها لا يمكن محوها بالكامل؟", options:["الاستمرارية","الانتشار","قابلية التكرار","المعرفة"], answer:0},
-    {type:"mcq", q:"ما هي «المعرفة» (Knowledge) بحسب تعريف الدرس؟", options:["معلومات تم تحليلها وتنظيمها بشكل منهجي للمساعدة في حل المشكلات","حقائق تُمثَّل بالأرقام والرموز","وسيلة لنقل المعلومات","نسخة من معلومات أولية"], answer:0},
-    {type:"tf", q:"المعلومات لها شكل مادي ثابت مثل الأشياء المادية.", answer:"false"},
-    {type:"tf", q:"بمجرد إنشاء المعلومات، لا يمكن محوها بالكامل (خاصية الاستمرارية).", answer:"true"},
-    {type:"tf", q:"الكتب والصحف والتلفزيون أمثلة على المعلومات الثانوية.", answer:"true"},
-    {type:"tf", q:"الثقافة الإعلامية هي القدرة على تفسير المعلومات التي تم الحصول عليها من الوسائط بدقة.", answer:"true"},
-    {type:"fill", q:"______ هي حقائق تُمثَّل باستخدام الأرقام أو الأحرف أو الرموز.", answer:"البيانات"},
-    {type:"fill", q:"______ هي معنى أو قيمة للمتلقي وتُستخدم لاتخاذ القرار.", answer:"المعلومات"}
+    {type:"tf", q:"بمجرد إنشاء المعلومات، لا يمكن محوها بالكامل (خاصية الاستمرارية).", answer:"true"}
   ];
 
   const r = await api('importData', { students: seedStudents, questions: seedQuestions });
   if (r.success) {
     await loadAllData();
-    toast('🎉 تم شحن الطلاب والأسئلة بنجاح!', 'success');
+    toast('🎉 تم شحن البيانات بنجاح!', 'success');
   }
 }
 </script>

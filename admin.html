@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>لوحة التحكم</title>
+<link rel="stylesheet" href="assets/css/main.css">
+<style>
+  body { padding: 24px; max-width: 900px; margin: 0 auto; }
+  .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px; margin-bottom:16px; }
+  table { width:100%; border-collapse: collapse; }
+  th, td { text-align: right; padding: 8px; border-bottom: 1px solid var(--border); }
+  .note { background:#fef3c7; border:1px solid var(--warning); border-radius:8px; padding:12px; font-size:14px; }
+</style>
+</head>
+<body>
+  <h1>لوحة التحكم</h1>
+
+  <div id="pw-gate" class="panel">
+    <p>كلمة مرور الدخول:</p>
+    <input type="password" id="admin-pw" style="padding:8px;width:220px;">
+    <button class="btn" style="width:auto;" id="admin-login-btn">دخول</button>
+    <p id="admin-error" style="color:var(--danger);"></p>
+  </div>
+
+  <div id="admin-content" class="hidden">
+    <div class="note">
+      ⚠️ هذه اللوحة <strong>للعرض والتصدير فقط</strong>. المشروع مستضاف على GitHub Pages (Static Hosting)،
+      ولا يملك متصفحك صلاحية الكتابة على المستودع مباشرة بدون رمز وصول (Access Token) لا يجوز وضعه في كود
+      عام. لتعديل الطلاب أو الاختبارات فعلياً: عدّل <code>data/students.json</code> أو <code>data/exams.json</code>
+      أو ملفات <code>data/exams/&lt;examId&gt;.json</code> محلياً أو عبر واجهة GitHub، ثم ادفعها (commit/push).
+      استخدم <code>generator.html</code> لإنشاء/تعديل ملفات الأسئلة بسهولة قبل رفعها.
+    </div>
+
+    <div class="panel">
+      <h2>الطلاب (من data/students.json)</h2>
+      <table id="students-table"><thead><tr><th>الاسم</th><th>الكود</th><th>الفصل</th><th>الحالة</th></tr></thead><tbody></tbody></table>
+    </div>
+
+    <div class="panel">
+      <h2>الاختبارات (من data/exams.json)</h2>
+      <table id="exams-table"><thead><tr><th>المعرف</th><th>المادة/الدرس</th><th>الفتح</th><th>القفل</th><th>الحالة</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/api.js"></script>
+  <script>
+    // كلمة مرور اللوحة تُتحقق منها عبر الـ Script (Settings) في نسخة الإنتاج.
+    // هذا الملف تجريبي يعرض البيانات العامة فقط بعد إدخال أي كلمة مرور محلية للتجربة.
+    document.getElementById("admin-login-btn").addEventListener("click", async () => {
+      document.getElementById("pw-gate").classList.add("hidden");
+      document.getElementById("admin-content").classList.remove("hidden");
+
+      const students = await Api.data.courses ? null : null; // placeholder
+      try {
+        const res = await fetch("data/students.json");
+        const students = await res.json();
+        const tbody = document.querySelector("#students-table tbody");
+        students.forEach(s => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${s.name}</td><td>${s.code}</td><td>${s.class}</td><td>${s.status === "active" ? "نشط ✅" : "معطل ⛔"}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (e) { /* تجاهل في العرض التجريبي */ }
+
+      try {
+        const res2 = await fetch("data/exams.json");
+        const exams = await res2.json();
+        const tbody2 = document.querySelector("#exams-table tbody");
+        exams.forEach(x => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${x.examId}</td><td>${x.subject} / ${x.lesson}</td><td>${x.openAt}</td><td>${x.closeAt}</td><td>${x.status === "enabled" ? "مفعّل ✅" : "معطّل ⛔"}</td>`;
+          tbody2.appendChild(tr);
+        });
+      } catch (e) { /* تجاهل في العرض التجريبي */ }
+    });
+  </script>
+</body>
+</html>

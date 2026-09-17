@@ -1,0 +1,26 @@
+[
+  {
+    "id": "STU001",
+    "code": "123456",
+    "name": "أحمد محمد علي",
+    "class": "3-أ",
+    "status": "active",
+    "registeredAt": "2026-09-01"
+  },
+  {
+    "id": "STU002",
+    "code": "223344",
+    "name": "سارة إبراهيم حسن",
+    "class": "3-أ",
+    "status": "active",
+    "registeredAt": "2026-09-01"
+  },
+  {
+    "id": "STU003",
+    "code": "998877",
+    "name": "يوسف عبد الله سيد",
+    "class": "3-ب",
+    "status": "disabled",
+    "registeredAt": "2026-09-01"
+  }
+]

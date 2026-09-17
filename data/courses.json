@@ -1,0 +1,20 @@
+{
+  "subjects": [
+    {
+      "id": "subject1",
+      "name": "الرياضيات",
+      "units": [
+        {
+          "id": "unit1",
+          "name": "الوحدة الأولى: الأعداد",
+          "lessons": [
+            { "id": "lesson1", "name": "الأعداد النسبية", "examId": "subject1-lesson1" },
+            { "id": "lesson2", "name": "المعادلات", "examId": "subject1-lesson2" }
+          ]
+        }
+      ]
+    },
+    { "id": "subject2", "name": "العلوم", "units": [] },
+    { "id": "subject3", "name": "اللغة العربية", "units": [] }
+  ]
+}

@@ -1,0 +1,22 @@
+[
+  {
+    "examId": "subject1-lesson1",
+    "subject": "الرياضيات",
+    "lesson": "الدرس الأول: الأعداد النسبية",
+    "openAt": "2026-09-18T08:00:00+03:00",
+    "closeAt": "2026-09-25T23:59:00+03:00",
+    "durationMinutes": 15,
+    "totalScore": 10,
+    "status": "enabled"
+  },
+  {
+    "examId": "subject1-lesson2",
+    "subject": "الرياضيات",
+    "lesson": "الدرس الثاني: المعادلات",
+    "openAt": "2026-10-01T08:00:00+03:00",
+    "closeAt": "2026-10-05T23:59:00+03:00",
+    "durationMinutes": 20,
+    "totalScore": 10,
+    "status": "enabled"
+  }
+]

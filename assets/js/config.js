@@ -5,7 +5,7 @@
  */
 const APP_CONFIG = {
   // رابط الـ Apps Script Web App المنشور (doPost). يُستبدل بالرابط الحقيقي بعد النشر.
-  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyoYSM26yM8sjKgml3XSCsd0bNazfw2IFDRifUmQ7PpHsfiPwT0afVW7HutT-yv4Kcv/exec",
+  APPS_SCRIPT_URL: "https://script.google.com/macros/s/AKfycbym77wVjDOonHomRbdcYhuibj9h7Tau1qTG90e35VqOBsrbpZzOAXx7UsPrSpQePx7v/exec",
 
   // القاعدة الأساسية لملفات البيانات على GitHub Pages (نفس مصدر الواجهة).
   // يُستخدم من الفرونت إند لجلب courses.json / exams.json / ملفات الشرح والمراجعة.

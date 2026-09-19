@@ -1,0 +1,66 @@
+/* ═══════════════════════════════════════════════════════════ */
+/*                    المتغيرات والإعدادات                    */
+/* ═══════════════════════════════════════════════════════════ */
+:root {
+    --primary: #1a237e;
+    --primary-light: #3949ab;
+    --primary-lighter: #5c6bc0;
+    --secondary: #f9a825;
+    --secondary-light: #fdd835;
+    --success: #2e7d32;
+    --success-light: #43a047;
+    --danger: #c62828;
+    --danger-light: #e53935;
+    --warning: #ef6c00;
+    --info: #0277bd;
+    --bg-light: #f0f2f5;
+    --bg-white: #ffffff;
+    --bg-dark: #263238;
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --text-light: #bdbdbd;
+    --text-white: #ffffff;
+    --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    --card-shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
+    --border-radius: 16px;
+    --border-radius-sm: 10px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --gradient-primary: linear-gradient(135deg, #1a237e 0%, #3949ab 50%, #5c6bc0 100%);
+    --gradient-gold: linear-gradient(135deg, #f9a825 0%, #fdd835 100%);
+    --gradient-success: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+}
+
+/* ═══════════════════════════════════════════════════════════ */
+/*                       Reset & Base                         */
+/* ═══════════════════════════════════════════════════════════ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg-light);
+    color: var(--text-primary);
+    line-height: 1.8;
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+a { text-decoration: none; color: inherit; }
+ul, ol { list-style: none; }
+img { max-width: 100%; }
+
+/* ═══════════════════════════════════════════════════════════ */
+/*                     Scrollbar Custom                       */
+/* ═══════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-light); }
+::-webkit-scrollbar-thumb {
+    background: var(--primary-light);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }

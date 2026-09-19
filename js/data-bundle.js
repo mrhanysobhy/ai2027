@@ -142,8 +142,8 @@ window.APP_DATA = {
           "title": "مقدمة في الحاسب الآلي",
           "finalExam": {
             "examId": "2026-2027-1",
-            "availableFrom": "2026-09-17",
-            "availableTo": "2026-12-31T23:59"
+            "availableFrom": "2026-09-23T14:00",
+            "availableTo": "2026-09-23T20:00"
           }
         }
       ],
@@ -162,8 +162,8 @@ window.APP_DATA = {
           "title": "ما هي المعلومات؟",
           "finalExam": {
             "examId": "2026-2027-1",
-            "availableFrom": "2026-09-17",
-            "availableTo": "2026-12-31T23:59"
+            "availableFrom": "2026-09-20T14:00",
+            "availableTo": "2026-09-20T20:00"
           }
         }
       ],

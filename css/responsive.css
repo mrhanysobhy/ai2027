@@ -1,0 +1,68 @@
+/* ═══════════════════════════════════════════════════════════ */
+/*                     Responsive                             */
+/* ═══════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .hero h2 { font-size: 1.8rem; }
+    .hero p { font-size: 1rem; }
+
+    .hero-stats {
+        gap: 20px;
+    }
+
+    .stat-number { font-size: 1.8rem; }
+
+    .subjects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .header-content {
+        padding: 10px 16px;
+    }
+
+    .logo-text h1 { font-size: 1rem; }
+    .logo-text p { font-size: 0.6rem; }
+
+    .user-info { font-size: 0.75rem; padding: 4px 10px; }
+
+    .subject-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .lesson-tabs {
+        padding: 0 10px;
+    }
+
+    .lesson-tab {
+        padding: 10px 12px;
+        font-size: 0.75rem;
+    }
+
+    .tab-content { padding: 16px; }
+
+    .question-card { padding: 20px; }
+
+    .exam-actions {
+        flex-direction: column;
+    }
+
+    .exam-actions .btn { width: 100%; justify-content: center; }
+
+    .footer-info { flex-direction: column; gap: 10px; }
+
+    .btn-lg {
+        padding: 12px 30px;
+        font-size: 1rem;
+    }
+
+    .modal { padding: 24px; }
+
+    .cert-results { gap: 20px; }
+}
+
+@media (max-width: 480px) {
+    .hero { padding: 40px 16px 60px; }
+    .hero h2 { font-size: 1.5rem; }
+    .section-title h2 { font-size: 1.5rem; }
+    .header-actions .btn span { display: none; }
+}

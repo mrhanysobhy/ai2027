@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pioneers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/content.css">
+    <link rel="stylesheet" href="css/exam.css">
+    <link rel="stylesheet" href="css/results.css">
+    <link rel="stylesheet" href="css/certificate.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                        Header                              -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<header class="header">
+    <div class="header-content">
+        <div class="logo-section" onclick="navigateTo('home')" style="cursor:pointer;">
+            <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+            <div class="logo-text">
+                <h1 id="platformName">AI Pioneers</h1>
+                <p>نحو مستقبل رقمي مشرق</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div id="headerUserInfo" style="display:none;" class="user-info">
+                <i class="fas fa-user-circle"></i>
+                <span id="headerUserName"></span>
+            </div>
+            <button id="headerResultsBtn" class="btn btn-outline" style="display:none;" onclick="navigateTo('results')">
+                <i class="fas fa-chart-bar"></i> <span>نتائجي</span>
+            </button>
+            <button id="headerLoginBtn" class="btn btn-primary" onclick="showLoginModal()">
+                <i class="fas fa-sign-in-alt"></i> <span>تسجيل الدخول</span>
+            </button>
+            <button id="headerLogoutBtn" class="btn btn-outline btn-sm" style="display:none;" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> <span>خروج</span>
+            </button>
+        </div>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                     Login Modal                            -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="loginModal" class="modal-overlay">
+    <div class="modal">
+        <button class="modal-close" onclick="hideLoginModal()"><i class="fas fa-times"></i></button>
+        <div class="modal-icon"><i class="fas fa-lock"></i></div>
+        <h2>تسجيل الدخول</h2>
+        <p>أدخل كود الطالب المكون من 6 أرقام للوصول إلى المحتوى</p>
+        <div class="input-group">
+            <i class="fas fa-key"></i>
+            <input type="text"
+                   id="loginCode"
+                   maxlength="6"
+                   placeholder="000000"
+                   autocomplete="off"
+                   inputmode="numeric"
+                   pattern="[0-9]*">
+        </div>
+        <p id="loginError" class="error-msg"><i class="fas fa-exclamation-circle"></i> كود غير صحيح، حاول مرة أخرى</p>
+        <button class="btn btn-primary btn-block btn-lg" onclick="attemptLogin()">
+            <i class="fas fa-sign-in-alt"></i> دخول
+        </button>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                    Home Page                               -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+    <section class="hero">
+        <div class="hero-content">
+            <h2>🤖 مرحباً بك في AI Pioneers</h2>
+            <p>دروس تفاعلية واختبارات ذكية تصنع منك مهندس المستقبل</p>
+            <button class="btn btn-primary btn-lg" id="heroLoginBtn" onclick="showLoginModal()">
+                <i class="fas fa-rocket"></i> ابدأ التعلم الآن
+            </button>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="heroSubjectCount">0</div>
+                    <div class="stat-label">مواد دراسية</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="heroLessonCount">0</div>
+                    <div class="stat-label">درس تعليمي</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="heroExamCount">0</div>
+                    <div class="stat-label">اختبار تجريبي</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <div class="section-title">
+            <h2>📚 المواد الدراسية</h2>
+            <p>اختر المادة التي تريد دراستها</p>
+        </div>
+        <div class="subjects-grid" id="subjectsGrid"></div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                   Subject Page                             -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="page-subject" class="page">
+    <div class="main-content">
+        <div class="breadcrumb">
+            <a onclick="navigateTo('home')"><i class="fas fa-home"></i> الرئيسية</a>
+            <span class="separator"><i class="fas fa-chevron-left"></i></span>
+            <span class="current" id="breadcrumbSubject"></span>
+        </div>
+        <div class="subject-header" id="subjectHeader"></div>
+        <div class="section-title">
+            <h2>📖 الدروس</h2>
+        </div>
+        <div class="lessons-list" id="lessonsList"></div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                   Results Page                             -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div id="page-results" class="page">
+    <div class="main-content">
+        <div class="breadcrumb">
+            <a onclick="navigateTo('home')"><i class="fas fa-home"></i> الرئيسية</a>
+            <span class="separator"><i class="fas fa-chevron-left"></i></span>
+            <span class="current">نتائجي</span>
+        </div>
+        <div class="section-title">
+            <h2>📊 نتائج الاختبارات النهائية</h2>
+            <p>جميع نتائج اختباراتك النهائية</p>
+        </div>
+        <div id="studentProgress"></div>
+        <div id="resultsContent"></div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                       Footer                               -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-info">
+            <span><i class="fas fa-school"></i> <span id="schoolNameFooter"></span></span>
+            <span><i class="fas fa-map-marker-alt"></i> <span id="administrationFooter"></span></span>
+            <span><i class="fas fa-chalkboard-teacher"></i> <span id="teacherNameFooter"></span></span>
+        </div>
+        <p class="footer-copy"><span id="platformNameFooter"></span> © 2026 جميع الحقوق محفوظة | <span id="academicYearFooter"></span></p>
+    </div>
+</footer>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg"></span>
+</div>
+
+<!-- Hidden Certificate Container -->
+<div id="certificateContainer" class="cert-hidden"></div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!--                      JavaScript                            -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<script src="js/data-bundle.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/navigation.js"></script>
+<script src="js/home.js"></script>
+<script src="js/subject.js"></script>
+<script src="js/review.js"></script>
+<script src="js/practice.js"></script>
+<script src="js/final.js"></script>
+<script src="js/sheets.js"></script>
+<script src="js/certificate.js"></script>
+<script src="js/results.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>

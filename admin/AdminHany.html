@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة ادمن المعلم | AI Pioneers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+    :root {
+        --primary: #1a237e;
+        --primary-light: #3949ab;
+        --primary-lighter: #5c6bc0;
+        --gold: #f9a825;
+        --gold-light: #fdd835;
+        --success: #2e7d32;
+        --danger: #c62828;
+        --warning: #ef6c00;
+        --bg: #f0f2f5;
+        --text: #212121;
+        --muted: #757575;
+        --card-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        --radius: 16px;
+        --gradient-primary: linear-gradient(135deg, #1a237e 0%, #3949ab 50%, #5c6bc0 100%);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Cairo', sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.8;
+        min-height: 100vh;
+    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--primary-lighter); border-radius: 10px; }
+
+    /* ══════════ شاشة الدخول ══════════ */
+    .login-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--gradient-primary);
+        padding: 20px;
+    }
+    .login-card {
+        background: #fff;
+        border-radius: var(--radius);
+        padding: 40px 36px;
+        width: 100%;
+        max-width: 420px;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        text-align: center;
+    }
+    .login-icon {
+        width: 72px; height: 72px;
+        margin: 0 auto 16px;
+        border-radius: 50%;
+        background: var(--gradient-primary);
+        color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 30px;
+    }
+    .login-card h1 { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+    .login-card p.sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+    .login-card input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-family: inherit;
+        font-size: 16px;
+        text-align: center;
+        letter-spacing: 3px;
+        transition: border-color .2s;
+        margin-bottom: 12px;
+    }
+    .login-card input:focus { outline: none; border-color: var(--primary-light); }
+    .login-card .btn {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: var(--gradient-primary);
+        color: #fff;
+        font-family: inherit;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity .2s;
+    }
+    .login-card .btn:hover { opacity: .9; }
+    .login-err {
+        color: var(--danger);
+        font-size: 14px;
+        font-weight: 700;
+        min-height: 22px;
+        margin-bottom: 8px;
+    }
+
+    /* ══════════ اللوحة ══════════ */
+    .app { max-width: 1200px; margin: 0 auto; padding: 20px 16px 60px; }
+    .topbar {
+        background: var(--gradient-primary);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 18px;
+        box-shadow: var(--card-shadow);
+    }
+    .topbar .title { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px; }
+    .topbar .title small { display: block; font-size: 12px; font-weight: 400; opacity: .85; }
+    .topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .topbar .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 9px 16px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        transition: transform .15s, opacity .2s;
+    }
+    .topbar .btn:hover { transform: translateY(-2px); }
+    .btn-refresh { background: var(--gold); color: #fff; }
+    .btn-logout { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); }
+
+    .banner {
+        border-radius: 12px;
+        padding: 13px 18px;
+        margin-bottom: 16px;
+        font-weight: 700;
+        font-size: 15px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    .banner.error { background: #fdecea; color: var(--danger); border: 1px solid #f5c6c0; }
+    .banner.success { background: #e8f5e9; color: var(--success); border: 1px solid #b9dfc0; }
+    .banner.info { background: #e3f2fd; color: #0d47a1; border: 1px solid #bbdefb; }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+    .stat {
+        background: #fff;
+        border-radius: 14px;
+        padding: 16px 18px;
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        box-shadow: var(--card-shadow);
+        border-right: 4px solid var(--primary-lighter);
+    }
+    .stat i { width: 42px; height: 42px; border-radius: 11px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 17px; background: var(--primary-light); flex-shrink: 0; }
+    .stat.green { border-right-color: var(--success); } .stat.green i { background: var(--success); }
+    .stat.red { border-right-color: var(--danger); } .stat.red i { background: var(--danger); }
+    .stat.gold { border-right-color: var(--gold); } .stat.gold i { background: var(--gold); }
+    .stat.gray { border-right-color: #90a4ae; } .stat.gray i { background: #607d8b; }
+    .stat-num { font-size: 24px; font-weight: 900; line-height: 1.2; }
+    .stat-label { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+    .toolbar {
+        background: #fff;
+        border-radius: 14px;
+        padding: 14px 18px;
+        box-shadow: var(--card-shadow);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    .toolbar .search-ic { position: relative; flex: 1; min-width: 220px; }
+    .toolbar .search-ic i { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
+    .toolbar .search-ic input {
+        width: 100%;
+        padding: 11px 42px 11px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14px;
+    }
+    .toolbar .search-ic input:focus { outline: none; border-color: var(--primary-light); }
+    .toolbar .meta { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+    .tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tab-btn {
+        border: none;
+        background: #fff;
+        color: var(--muted);
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: var(--card-shadow);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all .2s;
+    }
+    .tab-btn.active { background: var(--gradient-primary); color: #fff; }
+    .tab-btn:hover:not(.active) { transform: translateY(-2px); }
+
+    .card {
+        background: #fff;
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: var(--card-shadow);
+        margin-bottom: 16px;
+    }
+    .card-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--primary);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+    }
+    .card-title .count { background: var(--primary-lighter); color: #fff; border-radius: 20px; padding: 1px 12px; font-size: 13px; }
+
+    .table-wrap { overflow-x: auto; border-radius: 12px; border: 1px solid #eceff1; }
+    .tbl { width: 100%; border-collapse: collapse; min-width: 640px; font-size: 14px; }
+    .tbl th {
+        background: #3949ab;
+        color: #fff;
+        padding: 11px 12px;
+        font-weight: 700;
+        white-space: nowrap;
+        position: sticky;
+        top: 0;
+    }
+    .tbl td { padding: 10px 12px; border-bottom: 1px solid #eceff1; text-align: center; }
+    .tbl tbody tr:nth-child(even) { background: #f7f8fc; }
+    .tbl tbody tr:hover { background: #eef0fb; }
+    .tbl .strong { text-align: right; font-weight: 700; color: var(--primary); }
+    .tbl .code { direction: ltr; font-family: monospace; font-weight: 700; color: var(--muted); }
+    .tbl .num { font-weight: 800; }
+
+    .badge {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 20px;
+        font-size: 12.5px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+    .badge-pass { background: #e8f5e9; color: var(--success); }
+    .badge-fail { background: #fdecea; color: var(--danger); }
+    .badge-none { background: #eceff1; color: #607d8b; }
+
+    .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 30px 10px;
+        font-weight: 700;
+    }
+    .empty i { font-size: 34px; display: block; margin-bottom: 8px; opacity: .4; }
+
+    .period-bar { margin-top: 16px; padding-top: 12px; border-top: 1px dashed #e0e0e0; }
+    .period-bar-label { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; font-size: 14px; margin-bottom: 6px; gap: 8px; }
+    .period-bar-label span { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .progress { height: 10px; background: #eceff1; border-radius: 10px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--gradient-primary); border-radius: 10px; transition: width .4s; }
+
+    .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--muted); font-weight: 600; }
+    .hint { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+
+    @media (max-width: 560px) {
+        .topbar { flex-direction: column; align-items: flex-start; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+        .tab-btn { flex: 1; justify-content: center; }
+    }
+</style>
+</head>
+<body>
+
+<!-- ══════════ شاشة تسجيل الدخول ══════════ -->
+<div id="loginScreen" class="login-screen">
+    <div class="login-card">
+        <div class="login-icon"><i class="fas fa-user-shield"></i></div>
+        <h1>لوحة متابعة المعلم</h1>
+        <p class="sub">أدخل كلمة المرور للاطلاع على نتائج الطلاب المسجلة في الشيت</p>
+        <input type="password" id="passInput" placeholder="كلمة المرور" inputmode="numeric" autocomplete="off">
+        <div class="login-err" id="loginErr"></div>
+        <button class="btn" id="loginBtn"><i class="fas fa-sign-in-alt"></i> دخول</button>
+    </div>
+</div>
+
+<!-- ══════════ لوحة التحكم ══════════ -->
+<div id="app" class="app" hidden>
+    <header class="topbar">
+        <div class="title">
+            <i class="fas fa-chart-line"></i>
+            <span>لوحة متابعة نتائج الطلاب<small id="schoolNameTop">AI Pioneers</small></span>
+        </div>
+        <div class="topbar-actions">
+            <button class="btn btn-refresh" id="refreshBtn"><i class="fas fa-sync-alt"></i> تحديث البيانات</button>
+            <button class="btn btn-logout" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> خروج</button>
+        </div>
+    </header>
+
+    <div id="banner" class="banner" hidden></div>
+
+    <section class="stats" id="statsCards"></section>
+
+    <div class="toolbar">
+        <div class="search-ic">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="ابحث بالاسم أو كود الطالب...">
+        </div>
+        <div class="meta" id="metaInfo"></div>
+    </div>
+
+    <nav class="tabs">
+        <button class="tab-btn active" data-tab="students" id="tabBtnStudents"><i class="fas fa-users"></i> حالة الطلاب</button>
+        <button class="tab-btn" data-tab="exams" id="tabBtnExams"><i class="fas fa-clipboard-check"></i> حالة الاختبارات</button>
+        <button class="tab-btn" data-tab="log" id="tabBtnLog"><i class="fas fa-table"></i> السجل الكامل</button>
+    </nav>
+
+    <section id="tabStudents"></section>
+    <section id="tabExams" hidden></section>
+    <section id="tabLog" hidden></section>
+</div>
+
+<!-- بيانات المشروع (تُستخدم إن وُجدت عند فتح الملف داخل المشروع) -->
+<script src="../js/data-bundle.js"></script>
+
+<script>
+/* ═════════════════════════════════════════════════════════
+   لوحة ادمن المعلم — قراءة فقط للبيانات المسجلة في Google Sheets
+   ═════════════════════════════════════════════════════════ */
+
+const ADMIN_PASSWORD = '262888';
+const TEACHER_CODE = '262888'; // كود المعلم يُستبعد من قائمة الطلاب
+
+/* بيانات احتياطية تُستخدم إذا اعتُدم فتح الملف منفصلاً عن js/data-bundle.js
+   (مصدر الحقيقة هو data/students.json و data/config.json) */
+const FALLBACK_SHEET_URL = 'https://script.google.com/macros/s/AKfycbznlQ5YkngMMy_-Oq2MLY1blBjfoCkzKQiGFR8PYQSwvecCQGJikCzTc1OdvMbAlhXtsQ/exec';
+const FALLBACK_STUDENTS = [
+    { "code": "116022", "name": "احمد اسامة احمد عبدالله" },
+    { "code": "965297", "name": "احمد عبدالله كمال جابر" },
+    { "code": "570986", "name": "سيف محمد محمد علي" },
+    { "code": "150246", "name": "عصام تامر محمد عبدالمنعم" },
+    { "code": "350741", "name": "محمد بدوي عبدالرسول مهدي" },
+    { "code": "241426", "name": "محمد صالح عبدالوهاب محمد" },
+    { "code": "958917", "name": "محمد مفرح فتحي علي" },
+    { "code": "665513", "name": "مصطفي احمد عبدالحفيظ" },
+    { "code": "878590", "name": "معاذ رضا عبدالعظيم احمد" },
+    { "code": "108424", "name": "يوسف ايمن صاوي عبدالله" },
+    { "code": "879061", "name": "يوسف محمد عبدالله احمد" },
+    { "code": "772165", "name": "حبيبة محمد فتحي مهدي" },
+    { "code": "290933", "name": "حبيبة مدحت محمد هلال" },
+    { "code": "454105", "name": "حنين اشرف عبدالستار عمار" },
+    { "code": "655151", "name": "حنين كريم سيد احمد" },
+    { "code": "501577", "name": "رنا رفعت عيد فضل" },
+    { "code": "710607", "name": "شهد ايمن احمد هلال" },
+    { "code": "127772", "name": "عزة عمرو حمزة" },
+    { "code": "770924", "name": "فايزة تامر مرزوق عوض" },
+    { "code": "761065", "name": "مريم رمضان فتحي عبدالله" },
+    { "code": "799607", "name": "مريم صبري ابراهيم احمد" },
+    { "code": "136364", "name": "مريم محمود علي موسي" },
+    { "code": "606691", "name": "ملك محمد احمد عبدالله" },
+    { "code": "543474", "name": "مي عماد ممدوح حسين" },
+    { "code": "731712", "name": "احمد عبد الله احمد أبو ليفة" },
+    { "code": "822287", "name": "سبف احمد محمد عبد الغني" }
+];
+
+let SHEET_URL = '';
+let STUDENTS = [];
+let RECORDS = [];
+let LOADING = false;
+
+const state = { q: '', tab: 'students' };
+
+function $(id) { return document.getElementById(id); }
+function esc(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function num(v) { return Number(v) || 0; }
+
+/* ══════════ التهيئة ══════════ */
+function init() {
+    const appData = window.APP_DATA || null;
+    if (appData && appData.config && appData.config.sheetUrl) SHEET_URL = appData.config.sheetUrl;
+    if (appData && Array.isArray(appData.students)) STUDENTS = appData.students;
+    if (appData && appData.school && appData.school.schoolName) {
+        $('schoolNameTop').textContent = appData.school.schoolName;
+    }
+    if (!SHEET_URL) SHEET_URL = FALLBACK_SHEET_URL;
+    if (!STUDENTS.length) STUDENTS = FALLBACK_STUDENTS;
+
+    $('loginBtn').addEventListener('click', attemptLogin);
+    $('passInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') attemptLogin(); });
+    $('refreshBtn').addEventListener('click', loadData);
+    $('logoutBtn').addEventListener('click', logout);
+    $('searchInput').addEventListener('input', function () {
+        state.q = this.value.trim();
+        renderStudentsTab();
+        renderExamsTab();
+        renderLogTab();
+    });
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () { switchTab(this.getAttribute('data-tab')); });
+    });
+
+    if (sessionStorage.getItem('AdminHanyAuth') === '1') {
+        showApp();
+        loadData();
+    }
+}
+
+function attemptLogin() {
+    const val = $('passInput').value.trim();
+    if (val !== ADMIN_PASSWORD) {
+        $('loginErr').textContent = 'كلمة المرور غير صحيحة';
+        return;
+    }
+    $('loginErr').textContent = '';
+    sessionStorage.setItem('AdminHanyAuth', '1');
+    showApp();
+    loadData();
+}
+
+function logout() {
+    sessionStorage.removeItem('AdminHanyAuth');
+    $('app').hidden = true;
+    $('loginScreen').hidden = false;
+    $('passInput').value = '';
+}
+
+function showApp() {
+    $('loginScreen').hidden = true;
+    $('app').hidden = false;
+}
+
+function switchTab(tab) {
+    state.tab = tab;
+    document.querySelectorAll('.tab-btn').forEach(function (b) {
+        b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+    });
+    $('tabStudents').hidden = tab !== 'students';
+    $('tabExams').hidden = tab !== 'exams';
+    $('tabLog').hidden = tab !== 'log';
+}
+
+function showBanner(type, msg) {
+    const b = $('banner');
+    b.hidden = !msg;
+    if (!msg) return;
+    b.className = 'banner ' + type;
+    b.innerHTML = (type === 'error' ? '<i class="fas fa-exclamation-triangle"></i>' :
+                   type === 'success' ? '<i class="fas fa-check-circle"></i>' :
+                   '<i class="fas fa-info-circle"></i>') + '<span>' + esc(msg) + '</span>';
+}
+
+/* ══════════ جلب البيانات من الشيت (قراءة فقط) ══════════ */
+async function loadData() {
+    if (LOADING) return;
+    if (!SHEET_URL || SHEET_URL === 'GOOGLE_APPS_SCRIPT_URL_HERE') {
+        showBanner('error', 'لم يتم تعيين رابط Google Sheets بعد.');
+        return;
+    }
+    LOADING = true;
+    $('refreshBtn').disabled = true;
+    $('metaInfo').textContent = 'جاري تحميل البيانات...';
+    showBanner('');
+
+    const url = SHEET_URL + '?password=' + encodeURIComponent(ADMIN_PASSWORD);
+    try {
+        const resp = await fetch(url, { cache: 'no-store' });
+        const text = await resp.text();
+        let json;
+        try { json = JSON.parse(text); }
+        catch (e) {
+            throw new Error('الرد من السكربت غير صالح JSON. تأكد من نشر التحديث الجديد (doGet) في Google Apps Script.');
+        }
+        if (!json.ok) throw new Error(json.error || 'فشل قراءة البيانات من الشيت.');
+        RECORDS = json.rows || [];
+        showBanner('success', 'تم تحميل ' + RECORDS.length + ' سجل من الشيت بنجاح.');
+        renderAll();
+    } catch (err) {
+        showBanner('error', 'تعذر الاتصال بالشيت: ' + esc(err.message || err));
+        $('metaInfo').textContent = '';
+    } finally {
+        LOADING = false;
+        $('refreshBtn').disabled = false;
+        $('metaInfo').textContent = 'آخر تحديث: ' + new Date().toLocaleString('ar-EG');
+    }
+}
+
+/* ══════════ نموذج البيانات ══════════ */
+function periodKey(r) { return (r.subject || '') + '||' + (r.lesson || '') + '||' + (r.examId || ''); }
+
+function buildModel() {
+    const list = STUDENTS.filter(function (s) { return String(s.code) !== TEACHER_CODE; });
+    const byCode = {};
+    list.forEach(function (s) {
+        const rows = RECORDS.filter(function (r) { return String(r.studentCode) === String(s.code); });
+        const passed = new Set();
+        let last = null;
+        rows.forEach(function (r) {
+            if (r.result === 'ناجح') passed.add(periodKey(r));
+            if (!last || (r.date || '') > (last.date || '')) {
+                if (r.date) last = r;
+                else if (!last) last = r;
+            }
+        });
+        const takenBest = rows.reduce(function (a, r) {
+            return (!a || num(r.percentage) > num(a.percentage)) ? r : a;
+        }, null);
+        byCode[String(s.code)] = { rows: rows, attempts: rows.length, passedCount: passed.size, last: last, takenBest: takenBest };
+    });
+    return { list: list, byCode: byCode };
+}
+
+function buildPeriods() {
+    const map = new Map();
+    RECORDS.forEach(function (r) { if (r.subject) map.set(periodKey(r), r); });
+    const appData = window.APP_DATA || null;
+    if (appData && appData.subjects) {
+        appData.subjects.forEach(function (s) {
+            (s.lessons || []).forEach(function (l) {
+                if (l.finalExam && l.finalExam.examId) {
+                    const key = s.name + '||' + l.title + '||' + l.finalExam.examId;
+                    if (!map.has(key)) map.set(key, { subject: s.name, lesson: l.title, examId: l.finalExam.examId });
+                }
+            });
+        });
+    }
+    return Array.from(map.values());
+}
+
+function statusFor(code, period) {
+    const rows = RECORDS.filter(function (r) {
+        return String(r.studentCode) === String(code) && periodKey(r) === periodKey(period);
+    });
+    if (!rows.length) return { status: 'none' };
+    let best = rows[0];
+    rows.forEach(function (r) { if (num(r.percentage) > num(best.percentage)) best = r; });
+    return { status: best.result === 'ناجح' ? 'passed' : 'failed', percent: num(best.percentage), attempts: rows.length };
+}
+
+/* ══════════ التصيير ══════════ */
+function renderAll() {
+    renderStats();
+    renderStudentsTab();
+    renderExamsTab();
+    renderLogTab();
+}
+
+function renderStats() {
+    const model = buildModel();
+    const took = model.list.filter(function (s) { return model.byCode[String(s.code)].attempts > 0; }).length;
+    const notTook = model.list.length - took;
+    const passedRows = RECORDS.filter(function (r) { return r.result === 'ناجح'; }).length;
+    const failedRows = RECORDS.length - passedRows;
+
+    const card = function (cls, icon, val, label) {
+        return '<div class="stat ' + cls + '"><i class="' + icon + '"></i><div><div class="stat-num">' + val + '</div><div class="stat-label">' + label + '</div></div></div>';
+    };
+    $('statsCards').innerHTML =
+        card('', 'fas fa-graduation-cap', model.list.length, 'إجمالي الطلاب') +
+        card('green', 'fas fa-check-circle', took, 'أدى الاختبار') +
+        card('gray', 'fas fa-hourglass-half', notTook, 'لم يؤدِّ الاختبار') +
+        card('gold', 'fas fa-database', RECORDS.length, 'إجمالي السجلات') +
+        card('green', 'fas fa-trophy', passedRows, 'سجلات ناجح') +
+        card('red', 'fas fa-times-circle', failedRows, 'سجلات راسب');
+}
+
+function renderStudentsTab() {
+    const wrap = $('tabStudents');
+    const model = buildModel();
+    const q = state.q.trim();
+    const filtered = model.list.filter(function (s) {
+        return !q || s.name.indexOf(q) !== -1 || String(s.code).indexOf(q) !== -1;
+    });
+
+    if (!model.list.length) {
+        wrap.innerHTML = '<div class="card"><div class="empty"><i class="fas fa-users-slash"></i>لا توجد بيانات طلاب.</div></div>';
+        return;
+    }
+
+    let html = '<div class="card"><h3 class="card-title"><i class="fas fa-user-check"></i> حالة الطلاب <span class="count">' + filtered.length + '</span></h3>';
+    html += '<div class="table-wrap"><table class="tbl"><thead><tr>' +
+        '<th>#</th><th>اسم الطالب</th><th>كود الطالب</th><th>المحاولات</th><th>اختبارات مجتازة</th><th>الحالة</th><th>آخر نتيجة</th>' +
+        '</tr></thead><tbody>';
+
+    filtered.forEach(function (s, i) {
+        const st = model.byCode[String(s.code)];
+        const statusBadge = st.attempts > 0
+            ? (st.passedCount > 0 ? '<span class="badge badge-pass">أدى · ناجح</span>' : '<span class="badge badge-fail">أدى · راسب</span>')
+            : '<span class="badge badge-none">لم يؤدِّ</span>';
+        const lastCell = st.last
+            ? esc(st.last.result) + ' · ' + num(st.last.percentage) + '% <br><small>' + esc(st.last.subject) + '</small>'
+            : '—';
+        html += '<tr><td>' + (i + 1) + '</td><td class="strong">' + esc(s.name) + '</td>' +
+            '<td class="code">' + esc(s.code) + '</td><td class="num">' + st.attempts + '</td>' +
+            '<td class="num">' + st.passedCount + '</td><td>' + statusBadge + '</td><td>' + lastCell + '</td></tr>';
+    });
+
+    html += '</tbody></table></div>';
+    if (!filtered.length) html = '<div class="card"><div class="empty"><i class="fas fa-search"></i>لا يوجد طالب مطابق لبحثك.</div></div>';
+    html += '</div>';
+    wrap.innerHTML = html;
+}
+
+function renderExamsTab() {
+    const wrap = $('tabExams');
+    const periods = buildPeriods();
+    const model = buildModel();
+    const q = state.q.trim();
+
+    if (!periods.length) {
+        wrap.innerHTML = '<div class="card"><div class="empty"><i class="fas fa-clipboard-list"></i>لا توجد فترات اختبار مسجلة حتى الآن.</div></div>';
+        return;
+    }
+
+    const filtered = model.list.filter(function (s) {
+        return !q || s.name.indexOf(q) !== -1 || String(s.code).indexOf(q) !== -1;
+    });
+
+    let html = '<div class="card"><h3 class="card-title"><i class="fas fa-clipboard-check"></i> حالة الاختبارات — من أدى ومن لم يؤدِّ <span class="count">' + periods.length + ' فترة</span></h3>';
+    html += '<div class="table-wrap"><table class="tbl"><thead><tr><th>اسم الطالب</th><th>الكود</th>';
+    periods.forEach(function (p) { html += '<th>' + esc(p.subject) + ' — ' + esc(p.lesson) + '</th>'; });
+    html += '</tr></thead><tbody>';
+
+    filtered.forEach(function (s) {
+        html += '<tr><td class="strong">' + esc(s.name) + '</td><td class="code">' + esc(s.code) + '</td>';
+        periods.forEach(function (p) {
+            const st = statusFor(s.code, p);
+            if (st.status === 'passed') {
+                html += '<td><span class="badge badge-pass" title="نسبة ' + st.percent + '% · ' + st.attempts + ' محاولة">ناجح ' + st.percent + '%</span></td>';
+            } else if (st.status === 'failed') {
+                html += '<td><span class="badge badge-fail" title="نسبة ' + st.percent + '% · ' + st.attempts + ' محاولة">راسب ' + st.percent + '%</span></td>';
+            } else {
+                html += '<td><span class="badge badge-none">لم يؤدِّ</span></td>';
+            }
+        });
+        html += '</tr>';
+    });
+
+    html += '</tbody></table></div>';
+
+    periods.forEach(function (p) {
+        let took = 0, pass = 0, fail = 0;
+        model.list.forEach(function (s) {
+            const st = statusFor(s.code, p);
+            if (st.status !== 'none') { took++; if (st.status === 'passed') pass++; else fail++; }
+        });
+        const left = model.list.length - took;
+        const pct = model.list.length ? Math.round(took / model.list.length * 100) : 0;
+        html += '<div class="period-bar">' +
+            '<div class="period-bar-label"><strong>' + esc(p.subject) + ' — ' + esc(p.lesson) + '</strong>' +
+            '<span>أدى ' + took + ' · لم يؤدِّ ' + left + ' · ناجح ' + pass + ' · راسب ' + fail + ' (' + pct + '%)</span></div>' +
+            '<div class="progress"><div class="progress-fill" style="width:' + Math.max(pct, 4) + '%"></div></div></div>';
+    });
+
+    html += '<div class="legend">' +
+        '<span><span class="badge badge-pass">ناجح</span> اجتاز بنسبة ≥ نسبة النجاح</span>' +
+        '<span><span class="badge badge-fail">راسب</span> أدى بدون اجتياز (يُسمح بإعادة المحاولة)</span>' +
+        '<span><span class="badge badge-none">لم يؤدِّ</span> لم يسجل له أداء في هذه الفترة</span></div>';
+    if (!filtered.length) html = '<div class="card"><div class="empty"><i class="fas fa-search"></i>لا يوجد طالب مطابق لبحثك.</div></div>';
+    html += '</div>';
+    wrap.innerHTML = html;
+}
+
+function renderLogTab() {
+    const wrap = $('tabLog');
+    const q = state.q.trim();
+    let rows = RECORDS.filter(function (r) {
+        return !q || r.studentName.indexOf(q) !== -1 || String(r.studentCode).indexOf(q) !== -1 ||
+               (r.subject || '').indexOf(q) !== -1 || (r.lesson || '').indexOf(q) !== -1;
+    });
+    rows = rows.slice().sort(function (a, b) { return (b.date || '').localeCompare(a.date || ''); });
+
+    if (!RECORDS.length) {
+        wrap.innerHTML = '<div class="card"><div class="empty"><i class="fas fa-inbox"></i>لم تُسجل أي نتائج في الشيت بعد.</div></div>';
+        return;
+    }
+
+    let html = '<div class="card"><h3 class="card-title"><i class="fas fa-table"></i> السجل الكامل — كل ما سُجل في الشيت <span class="count">' + rows.length + '</span></h3>';
+    html += '<div class="table-wrap"><table class="tbl"><thead><tr>' +
+        '<th>التاريخ</th><th>كود الطالب</th><th>اسم الطالب</th><th>المادة</th><th>الدرس</th>' +
+        '<th>معرف الاختبار</th><th>المحاولة</th><th>النتيجة</th><th>الدرجة</th><th>المجموع</th><th>النسبة</th>' +
+        '</tr></thead><tbody>';
+
+    rows.forEach(function (r) {
+        const res = r.result === 'ناجح'
+            ? '<span class="badge badge-pass">ناجح</span>'
+            : (r.result === 'راسب' ? '<span class="badge badge-fail">راسب</span>' : esc(r.result || '—'));
+        html += '<tr><td class="code">' + esc(r.date) + '</td>' +
+            '<td class="code">' + esc(r.studentCode) + '</td>' +
+            '<td class="strong">' + esc(r.studentName) + '</td>' +
+            '<td>' + esc(r.subject) + '</td><td>' + esc(r.lesson) + '</td>' +
+            '<td class="code">' + esc(r.examId) + '</td>' +
+            '<td class="num">' + num(r.attempt) + '</td><td>' + res + '</td>' +
+            '<td class="num">' + num(r.score) + '</td><td class="num">' + num(r.total) + '</td>' +
+            '<td class="num">' + num(r.percentage) + '%</td></tr>';
+    });
+
+    html += '</tbody></table></div>';
+    if (!rows.length) html = '<div class="card"><div class="empty"><i class="fas fa-search"></i>لا يوجد سجل مطابق لبحثك.</div></div>';
+    html += '</div>';
+    wrap.innerHTML = html;
+}
+
+init();
+</script>
+</body>
+</html>

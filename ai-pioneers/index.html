@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar" data-theme="system">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Pioneers | منصة التعلم الذكي</title>
+<meta name="description" content="منصة تعليمية تفاعلية للصف الأول الثانوي — مبادئ الحاسب الآلي والبرمجة والذكاء الاصطناعي، مع اختبارات تجريبية ونهائية وشهادات PDF.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+<link href="css/base.css" rel="stylesheet">
+<link href="css/components.css" rel="stylesheet">
+<link href="css/exam.css" rel="stylesheet">
+<link href="css/certificate.css" rel="stylesheet">
+</head>
+<body>
+
+<header id="H"></header>
+
+<main id="app"></main>
+
+<div id="mod" class="modal" onclick="if(event.target===this)closeLogin()">
+  <div class="card">
+    <h3>🔐 تسجيل دخول الطالب</h3>
+    <input id="code" class="inp" style="width:100%" inputmode="numeric" maxlength="6"
+           placeholder="كود الدخول (6 أرقام)"
+           oninput="this.value=this.value.replace(/\D/g,'')"
+           onkeydown="if(event.key=='Enter')doLogin()">
+    <p class="mu" style="font-size:.85rem">الكود يُوزَّع من إدارة المدرسة أو من المعلم.</p>
+    <div class="row">
+      <button class="btn p" onclick="doLogin()">دخول</button>
+      <button class="btn" onclick="closeLogin()">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>🎓 مدرسة الباويطي الثانوية التجارية | AI Pioneers</div>
+  <div>AI Pioneers © 2026 جميع الحقوق محفوظة</div>
+</footer>
+
+<div id="toast" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas-pro@1.5.11/dist/html2canvas-pro.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="js/data-bundle.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/sheets.js"></script>
+<script src="js/certificate.js"></script>
+<script src="js/exam.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

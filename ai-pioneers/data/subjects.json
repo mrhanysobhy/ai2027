@@ -1,0 +1,30 @@
+[
+  {
+    "id": "computer-basics",
+    "name": "مبادئ الحاسب الآلي",
+    "icon": "fa-desktop",
+    "color": "#2196F3",
+    "gradient": "linear-gradient(135deg, #1565c0 0%, #42a5f5 100%)",
+    "description": "تعلم أساسيات الحاسب الآلي ومكوناته وأنظمة التشغيل",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "مقدمة في الحاسب الآلي"
+      }
+    ]
+  },
+  {
+    "id": "programming-ai",
+    "name": "البرمجة والذكاء الاصطناعي",
+    "icon": "fa-code",
+    "color": "#FF5722",
+    "gradient": "linear-gradient(135deg, #d84315 0%, #ff8a65 100%)",
+    "description": "تعلم أساسيات البرمجة وتطبيقاتها في مجال الذكاء الاصطناعي",
+    "lessons": [
+      {
+        "id": 1,
+        "title": "ما هي المعلومات؟"
+      }
+    ]
+  }
+]

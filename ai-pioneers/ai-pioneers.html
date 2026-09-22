@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI Pioneers | منصة التعلم الذكي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--tx:#1b2a3a;--mu:#5d6d7e;--pr:#1565c0;--ok:#2e7d32;--bad:#c62828;--bd:#dde5ee;--okb:#e8f5e9;--badb:#ffebee;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1720;--card:#182330;--tx:#e8eef5;--mu:#9fb0c3;--pr:#64b5f6;--ok:#66bb6a;--bad:#ef5350;--bd:#2a3a4c;--okb:#1b3a24;--badb:#4a1f22}}
+:root[data-theme="dark"]{--bg:#0f1720;--card:#182330;--tx:#e8eef5;--mu:#9fb0c3;--pr:#64b5f6;--ok:#66bb6a;--bad:#ef5350;--bd:#2a3a4c;--okb:#1b3a24;--badb:#4a1f22}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;padding-bottom:64px;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,sans-serif;line-height:1.7}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--bd);display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:8px 16px}
+header b{color:var(--pr);font-size:1.1rem}header small{color:var(--mu);flex:1}
+a{color:var(--pr);text-decoration:none}
+main{max-width:980px;margin:0 auto;padding:16px}
+.btn{font:inherit;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;padding:8px 16px;cursor:pointer;display:inline-block}
+.btn.p{background:var(--pr);color:#fff;border-color:var(--pr)}.btn.ok{background:var(--ok);color:#fff;border-color:var(--ok)}.btn:disabled{opacity:.4;cursor:default}
+.btn:focus-visible,.opt:focus-visible,.inp:focus-visible,a:focus-visible{outline:3px solid var(--pr);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:16px;margin:12px 0}
+.banner{background:linear-gradient(135deg,#0d47a1,#26a69a);color:#fff;border-radius:16px;padding:28px 20px;text-align:center}
+.banner h1{margin:0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:14px}
+.sc{position:relative;border-radius:16px;color:#fff;padding:20px;min-height:170px;cursor:pointer;overflow:hidden}
+.sc .ic{font-size:2.2rem}.sc h3{margin:6px 0}.sc p{margin:0;opacity:.95;font-size:.9rem}
+.lock{position:absolute;inset:0;background:rgba(10,20,30,.72);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700}
+.row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}.tabs a{padding:8px 14px;border-radius:10px;background:var(--card);border:1px solid var(--bd);color:var(--tx)}.tabs a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+.opt{display:block;width:100%;text-align:right;font:inherit;color:var(--tx);background:var(--card);border:2px solid var(--bd);border-radius:10px;padding:10px 14px;margin:8px 0;cursor:pointer}
+.opt.sel{border-color:var(--pr)}.opt.ok,.inp.ok{border-color:var(--ok);background:var(--okb)}.opt.bad,.inp.bad{border-color:var(--bad);background:var(--badb)}
+.inp{font:inherit;color:var(--tx);background:var(--card);border:2px solid var(--bd);border-radius:10px;padding:8px 12px;margin:6px 6px 6px 0}
+.bar{height:10px;background:var(--bd);border-radius:8px;overflow:hidden}.bar i{display:block;height:100%;background:var(--pr)}
+.mu{color:var(--mu)}.ex{margin-top:8px;padding:10px;border-radius:10px;background:var(--bg)}
+.note{background:#fff8e1;color:#5d4200;border-radius:10px;padding:10px 14px}
+.tm{font-weight:800;color:var(--bad);font-variant-numeric:tabular-nums}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.stats .card{text-align:center;margin:0}.stats b{font-size:1.6rem;color:var(--pr);display:block}
+.tag{padding:2px 10px;border-radius:20px;font-size:.85rem}.tag.ok{background:var(--okb);color:var(--ok)}.tag.bad{background:var(--badb);color:var(--bad)}
+.prose table,table.t{border-collapse:collapse;width:100%}.prose td,.prose th,.t td,.t th{border:1px solid var(--bd);padding:6px 10px;text-align:right}
+.tip{border-right:4px solid var(--pr);background:var(--bg);padding:10px 14px;border-radius:8px}
+.tw{overflow-x:auto}
+#mod{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:9;padding:16px}#mod .card{max-width:360px;width:100%}
+#toast{position:fixed;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:#263238;color:#fff;padding:10px 20px;border-radius:24px;display:none;z-index:10}
+.cert{border:8px double #b8860b;background:#fffdf5;color:#3b2f00;text-align:center;padding:28px 16px;border-radius:6px}.cert h1{color:#8a6500;margin:8px 0}
+@media print{header,footer,.noprint,#toast{display:none!important}body{background:#fff}}
+@media(max-width:480px){main{padding:10px}}
+footer{position:fixed;bottom:0;left:0;right:0;z-index:4;background:var(--card);border-top:1px solid var(--bd);text-align:center;font-size:.8rem;line-height:1.5;color:var(--mu);padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabs a.tb{background:var(--c);border-color:var(--c);color:#fff;font-weight:600}
+.tabs a.explain{--c:#1565c0}.tabs a.review{--c:#e65100}.tabs a.practice{--c:#7b1fa2}.tabs a.final{--c:#2e7d32}
+.tabs.lt a.tb:not(.on){opacity:.72}.tabs a.tb.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--c)}.tabs a.tb:hover{opacity:1}
+@keyframes up{from{opacity:0;transform:translateY(16px)}}
+@keyframes fl{50%{transform:translateY(-8px) rotate(-4deg)}}
+@keyframes gr{0%,100%{background-position:0 50%}50%{background-position:100% 50%}}
+@keyframes pop{0%{transform:scale(.94)}55%{transform:scale(1.04)}100%{transform:scale(1)}}
+@keyframes shk{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes grow{from{transform:scaleX(0)}}
+main>*,#box>*{animation:up .5s both}
+.grid>*{animation:up .55s both}.grid>:nth-child(2){animation-delay:.12s}.grid>:nth-child(3){animation-delay:.24s}
+.banner{background:linear-gradient(120deg,#0d47a1,#26a69a,#7e57c2,#0d47a1);background-size:300% 300%;animation:up .5s both,gr 10s ease infinite;box-shadow:0 10px 30px rgba(13,71,161,.25)}
+.banner h1{font-size:2rem;letter-spacing:.5px}
+.sc{transition:transform .3s,box-shadow .3s;box-shadow:0 4px 14px rgba(0,0,0,.15)}.sc:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 16px 32px rgba(0,0,0,.28)}
+.sc .ic{display:inline-block;animation:fl 3.2s ease-in-out infinite}
+.card{transition:box-shadow .25s,transform .25s}.card:hover{box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.btn,.opt,.tabs a{transition:transform .18s,box-shadow .2s,background .2s,border-color .2s,opacity .2s}
+.btn:hover:not(:disabled),.tabs a:hover{transform:translateY(-3px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
+.btn:active,.tabs a:active,.opt:active{transform:scale(.96)}
+.opt:hover:not(:disabled){transform:translateX(-5px);border-color:var(--pr)}
+.opt.ok{animation:pop .45s}.opt.bad{animation:shk .4s}
+.bar i{transform-origin:right;animation:grow .9s ease both}
+#box>.card.q{animation:none}.q .bar i{animation:none;transition:width .35s}
+#mod .card{animation:pop .35s}.cert{animation:pop .7s both}
+#toast{animation:up .3s}
+header b{background:linear-gradient(90deg,var(--pr),#26a69a);-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header id="H"></header>
+<main id="app"></main>
+<div id="mod"><div class="card"><h3>تسجيل دخول الطالب</h3><input id="code" class="inp" style="width:100%" inputmode="numeric" maxlength="6" placeholder="كود الدخول (6 أرقام)" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key=='Enter')login()"><p class="mu" style="font-size:.85rem">أكواد تجريبية: 111111 · 222222 · 333333</p><div class="row"><button class="btn p" onclick="login()">دخول</button><button class="btn" onclick="$('mod').style.display='none'">إلغاء</button></div></div></div>
+<footer><div>إدارة الواحات البحرية التعليمية | مدرسة الباويطي الثانوية التجارية</div><div>AI Pioneers © 2026 جميع الحقوق محفوظة | 2026-2027</div></footer>
+<div id="toast"></div>
+<script>
+const $=id=>document.getElementById(id);
+const ls={g:k=>{try{return localStorage.getItem(k)}catch(e){return null}},s:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}},d:k=>{try{localStorage.removeItem(k)}catch(e){}}};
+const SCH={school:'مدرسة الباويطي الثانوية التجارية',teacher:'أ/ هاني صبحي',principal:'د/ علاء حلمي',year:'2026-2027',cls:'الصف الأول الثانوي',min:'وزارة التربية والتعليم',dir:'مديرية التربية والتعليم بالجيزة',adm:'إدارة الواحات البحرية التعليمية'};
+const ST={'111111':'أحمد محمد','222222':'سارة علي','333333':'يوسف حسن'};
+const day=o=>{const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+o);return d};
+const fd=d=>new Date(d).toLocaleDateString('ar-EG',{day:'numeric',month:'long',year:'numeric'});
+const G=p=>p>=90?'ممتاز':p>=80?'جيد جداً':p>=70?'جيد':p>=60?'مقبول':'راسب';
+const DUR=2; // مدة الاختبار النهائي بالدقائق (تجريبي)
+const S=[
+{id:'cb',name:'مبادئ الحاسب الآلي',ic:'🖥️',g:'#1565c0,#42a5f5',d:'أساسيات الحاسب ومكوناته ونظم التشغيل',L:['مقدمة في الحاسب الآلي','مكونات الحاسب','نظم التشغيل'],w:[-5,10],
+ ex:'<h2>ما هو الحاسب الآلي؟</h2><p>جهاز إلكتروني يستقبل البيانات، ويعالجها، ثم يُخرج النتائج ويخزنها.</p><table><tr><th>الوحدة</th><th>الوظيفة</th><th>مثال</th></tr><tr><td>الإدخال</td><td>إدخال البيانات</td><td>لوحة المفاتيح</td></tr><tr><td>المعالجة</td><td>تنفيذ التعليمات</td><td>المعالج CPU</td></tr><tr><td>الإخراج</td><td>عرض النتائج</td><td>الشاشة</td></tr></table><div class="tip">💡 ذاكرة RAM مؤقتة وتفقد محتواها عند إطفاء الجهاز.</div>',
+ q:[['ما الوحدة المسؤولة عن معالجة البيانات؟',['الذاكرة','المعالج','الشاشة','الفأرة'],1],['أي مما يلي وحدة إدخال؟',['الطابعة','السماعة','لوحة المفاتيح','الشاشة'],2],['ذاكرة RAM هي ذاكرة؟',['دائمة','مؤقتة','للقراءة فقط','خارجية'],1],['يُقاس حجم التخزين بوحدة؟',['هرتز','بايت','فولت','واط'],1]],
+ r:[['أي وحدة تعرض النتائج للمستخدم؟',['الطابعة فقط','الشاشة','الفأرة','الماسح'],1,'الشاشة من وحدات الإخراج.'],['الشاشة من وحدات الإخراج',true,'الشاشة تعرض النتائج فهي وحدة إخراج.'],['الوحدة المسؤولة عن تنفيذ التعليمات هي ________','المعالج','المعالج (CPU) هو عقل الحاسب.']]},
+{id:'ai',name:'الذكاء الاصطناعي',ic:'🤖',g:'#6a1b9a,#ba68c8',d:'مفاهيم الذكاء الاصطناعي وتطبيقاته في حياتنا',L:['ما هو الذكاء الاصطناعي؟','تعلّم الآلة'],w:[7,14],
+ ex:'<h2>مفهوم الذكاء الاصطناعي</h2><p>قدرة الآلات على محاكاة بعض أنماط التفكير البشري كالتعلم والاستنتاج.</p><div class="tip">💡 من تطبيقاته: المساعدات الصوتية والتعرف على الصور.</div>',
+ q:[['الذكاء الاصطناعي هو؟',['لغة برمجة','آلات تحاكي التفكير البشري','نوع من الشاشات','شبكة'],1],['أي مثال على تطبيقات الذكاء الاصطناعي؟',['المسطرة','القلم','المساعد الصوتي','الآلة الحاسبة البسيطة'],2],['تعلّم الآلة يعتمد أساساً على؟',['الورق','الطباعة','الكهرباء فقط','البيانات'],3],['التعرف على الوجوه يُعد؟',['تطبيقاً للذكاء الاصطناعي','جهاز إدخال','ذاكرة','نظام تشغيل'],0]],
+ r:[['أي مما يلي يحتاج بيانات للتعلم؟',['الخوارزميات التقليدية فقط','تعلّم الآلة','المسطرة','الطابعة'],1,'تعلّم الآلة يتعلم من البيانات.'],['الذكاء الاصطناعي يحاكي بعض قدرات البشر',true,'يحاكي التعلم والاستنتاج.'],['يتعلم النموذج من ________','البيانات','التدريب يتم عبر البيانات.']]},
+{id:'pr',name:'البرمجة والذكاء الاصطناعي',ic:'💻',g:'#00695c,#4db6ac',d:'أساسيات البرمجة بلغة بايثون وتطبيقات الذكاء الاصطناعي',L:['أساسيات البرمجة','المتغيرات والعمليات'],w:[-20,-10],
+ ex:'<h2>الخوارزمية والبرمجة</h2><p>الخوارزمية خطوات مرتبة لحل مشكلة، والبرنامج تنفيذها بلغة برمجة.</p><div class="tip">💡 <code>print("مرحبا")</code> تطبع نصاً في بايثون.</div>',
+ q:[['أي أمر يطبع نصاً في بايثون؟',['input()','print()','len()','type()'],1],['المتغير هو؟',['جهاز إدخال','نوع طابعة','اسم يخزّن قيمة','ملف صوتي'],2],['الخوارزمية هي؟',['خطوات مرتبة لحل مشكلة','لغة بشرية','جهاز','شاشة'],0],['ناتج 2+3*2 ؟',['10','8','7','12'],1]],
+ r:[['أي أمر يقرأ مدخلات المستخدم؟',['print()','input()','int','if'],1,'input() تقرأ نصاً من المستخدم.'],['ناتج 2+3*2 يساوي 8',true,'الضرب أولاً: 3*2=6 ثم 6+2=8.'],['الأمر ________ يطبع نصاً في بايثون','print','print تعرض القيمة على الشاشة.']]}
+];
+const AT=[[0,0],[1,0]];
+const T0=day(-15).getTime();
+let R=JSON.parse(ls.g('res')||'null')||[
+ {c:'111111',s:'pr',l:1,e:'p1',a:1,sc:3,t:4,ok:1,d:T0},
+ {c:'222222',s:'cb',l:1,e:'p1',a:1,sc:2,t:4,ok:0,d:day(-4).getTime()},
+ {c:'222222',s:'cb',l:1,e:'p1',a:2,sc:4,t:4,ok:1,d:day(-3).getTime()},
+ {c:'333333',s:'pr',l:1,e:'p1',a:1,sc:2,t:4,ok:0,d:day(-14).getTime()}];
+let me=null,X=null,RQ=[],adm=false,q0='';
+try{const c=atob(ls.g('loggedInStudent')||'');if(ST[c])me={code:c,name:ST[c]}}catch(e){}
+const pct=r=>Math.round(r.sc/r.t*100);
+const sub=id=>S.find(s=>s.id==id);
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(t.h);t.h=setTimeout(()=>t.style.display='none',2600)}
+function openLogin(){$('mod').style.display='flex';$('code').value='';$('code').focus()}
+function login(){const c=$('code').value.trim();if(c.length==6&&ST[c]){me={code:c,name:ST[c]};ls.s('loggedInStudent',btoa(c));$('mod').style.display='none';toast('أهلاً '+me.name);nav()}else{toast('كود غير صحيح');$('code').value='';$('code').focus()}}
+function logout(){me=null;ls.d('loggedInStudent');location.hash='#home';nav()}
+function hdr(){$('H').innerHTML=`<b>🎓 AI Pioneers</b><span style="flex:1"></span><a href="#home">الرئيسية</a>`+(me?`<a href="#results">نتائجي</a><span>👤 ${me.name}</span><button class="btn" onclick="logout()">خروج</button>`:`<button class="btn p" onclick="openLogin()">تسجيل الدخول</button>`)}
+function nav(){
+ if(X&&X.iv)clearInterval(X.iv);X=null;hdr();
+ const p=(location.hash||'#home').slice(1).split('/');
+ if(p[0]=='admin')return admin();
+ if(!me&&p[0]!='home'&&p[0]!=''){location.hash='#home';toast('سجّل دخولك أولاً');return}
+ window.scrollTo(0,0);
+ if(p[0]=='subject')return subjectV(p[1]);
+ if(p[0]=='lesson')return lessonV(p[1],+p[2],p[3]||'explain');
+ if(p[0]=='results')return results();
+ if(p[0]=='cert')return cert(p[1],+p[2]);
+ home();
+}
+function home(){
+ $('app').innerHTML=`<div class="banner"><h1>🎓 AI Pioneers</h1><p>دروس تفاعلية واختبارات ذكية تصنع منك مهندس المستقبل</p></div><div class="grid">`+S.map(s=>`<div class="sc" style="background:linear-gradient(135deg,${s.g})" onclick="${me?`location.hash='#subject/${s.id}'`:'openLogin()'}"><div class="ic">${s.ic}</div><h3>${s.name}</h3><p>${s.d}</p><p style="margin-top:8px">📚 ${s.L.length} دروس · 📝 ${s.L.length} اختبارات</p>${me?'':'<div class="lock"><span style="font-size:2rem">🔒</span>سجل دخولك أولاً</div>'}</div>`).join('')+`</div><p class="mu" style="text-align:center;margin-top:24px"><a href="#admin">لوحة الإدارة (للمعلم)</a></p>`}
+function subjectV(id){
+ const s=sub(id);if(!s)return home();
+ $('app').innerHTML=`<div class="banner" style="background:linear-gradient(135deg,${s.g})"><div style="font-size:2.4rem">${s.ic}</div><h1>${s.name}</h1><p>${s.d}<br>${SCH.cls} · ${SCH.year}</p></div>`+s.L.map((t,i)=>`<div class="card"><h3>الدرس ${i+1}: ${t}</h3><div class="tabs">${[['explain','📖 الشرح'],['review','🔄 المراجعة'],['practice','✏️ اختبار تجريبي'],['final','🏁 اختبار نهائي']].map(([k,v])=>`<a class="tb ${k}" href="#lesson/${id}/${i+1}/${k}">${v}</a>`).join('')}</div></div>`).join('')}
+function lessonV(id,n,tab){
+ const s=sub(id);if(!s||!s.L[n-1])return home();
+ $('app').innerHTML=`<p><a href="#subject/${id}">← ${s.name}</a></p><h2 style="margin:0">${s.L[n-1]}</h2><small class="mu">${s.name} | AI Pioneers</small><div class="tabs lt">${[['explain','الشرح'],['review','المراجعة'],['practice','اختبار تجريبي'],['final','اختبار نهائي']].map(([k,v])=>`<a class="tb ${k} ${k==tab?'on':''}" href="#lesson/${id}/${n}/${k}">${v}</a>`).join('')}</div><div id="box"></div>`;
+ if(n>1)return $('box').innerHTML='<div class="card" style="text-align:center">📝 الدرس قيد التحضير</div>';
+ ({explain:()=>$('box').innerHTML=`<div class="card prose">${s.ex}</div>`,review:()=>review(s),practice:()=>pIntro(s,n),final:()=>fin(s,n)})[tab]()}
+function review(s){
+ const r=s.r;RQ=[{k:'m',q:r[0][0],o:r[0][1],c:r[0][2],e:r[0][3]},{k:'t',q:r[1][0],c:r[1][1],e:r[1][2]},{k:'c',q:r[2][0],c:r[2][1],e:r[2][2]}];
+ $('box').innerHTML='<div class="note">هذه الأسئلة للمراجعة فقط دون درجات — محاولة واحدة لكل سؤال</div>'+RQ.map((x,i)=>`<div class="card" id="rq${i}"><h3>${i+1}. ${x.q}</h3>`+(x.k=='m'?x.o.map((o,j)=>`<button class="opt" data-v="${j}" onclick="rv(${i},${j})">${o}</button>`).join(''):x.k=='t'?`<button class="opt" data-v="true" onclick="rv(${i},true)">صح ✓</button><button class="opt" data-v="false" onclick="rv(${i},false)">خطأ ✗</button>`:`<input id="ci${i}" class="inp" placeholder="اكتب إجابتك"><button class="btn p" onclick="rv(${i},$('ci${i}').value)">تحقق</button>`)+`<div class="ex" id="ex${i}" hidden></div></div>`).join('')}
+function rv(i,v){const x=RQ[i];if(x.d)return;x.d=1;const ok=x.k=='c'?String(v).trim().toLowerCase()==x.c.toLowerCase():v===x.c;
+ document.querySelectorAll('#rq'+i+' .opt').forEach(b=>{if(b.dataset.v==String(x.c))b.classList.add('ok');else if(b.dataset.v==String(v))b.classList.add('bad');b.disabled=true});
+ if(x.k=='c'){const c=$('ci'+i);c.classList.add(ok?'ok':'bad');c.disabled=true}
+ const e=$('ex'+i);e.hidden=false;e.innerHTML=(ok?'✅ إجابة صحيحة. ':'❌ إجابة خاطئة. ')+(x.k=='c'?'الإجابة: '+x.c+'. ':'')+x.e}
+function pIntro(s,n){$('box').innerHTML=`<div class="card" style="text-align:center"><h3>✏️ اختبار تجريبي</h3><p>${s.q.length} أسئلة — تُخلط عشوائياً في كل محاولة. الإعادة غير محدودة ولا تُحفظ النتائج.</p><button class="btn p" onclick="startEx('practice','${s.id}',${n})">ابدأ الاختبار</button></div>`}
+function fst(s,n){
+ const f=day(s.w[0]).getTime(),t=day(s.w[1]).getTime()+86399000,now=Date.now();
+ const mine=R.filter(r=>r.c==me.code&&r.s==s.id&&r.l==n).sort((a,b)=>a.a-b.a);
+ return{f,t,mine,pass:mine.find(r=>r.ok),last:mine[mine.length-1],st:now<f?'up':now<=t?'open':'closed'}}
+function resCard(s,n,r,extra=''){const p=pct(r);return`<div class="card" style="text-align:center"><h2>${r.ok?'🎉 مبروك! لقد اجتزت الاختبار':'لم تجتز الاختبار'}</h2><p>الدرجة: <b>${r.sc} / ${r.t}</b> · النسبة: <b>${p}%</b> · التقدير: <b>${G(p)}</b> · المحاولة ${r.a}</p><div class="bar"><i style="width:${p}%;background:var(${r.ok?'--ok':'--bad'})"></i></div><p>${extra}</p>${r.ok?`<a class="btn ok" href="#cert/${s.id}/${n}">🏅 تحميل الشهادة</a>`:''}</div>`}
+function fin(s,n){
+ const c=fst(s,n),b=$('box');
+ if(c.st=='up')return b.innerHTML=`<div class="card" style="text-align:center"><h3>⏳ الاختبار النهائي سيُفتح قريباً</h3><p>يبدأ في ${fd(c.f)}</p></div>`;
+ if(c.pass)return b.innerHTML=resCard(s,n,c.pass,'تم قفل الاختبار بعد الاجتياز.');
+ if(c.st=='closed')return b.innerHTML=c.last?resCard(s,n,c.last,'🔒 انتهت فترة الاختبار ولا تتاح إعادة المحاولة.'):'<div class="card" style="text-align:center"><h3>🔒 الاختبار غير متاح</h3><p>انتهت فترة الاختبار النهائي.</p></div>';
+ b.innerHTML=(c.last?resCard(s,n,c.last,'يمكنك إعادة المحاولة طالما الاختبار مفتوح.'):'')+`<div class="card" style="text-align:center"><h3>🏁 الاختبار النهائي</h3><p>الفترة: ${fd(c.f)} → ${fd(c.t)}<br>${s.q.length} أسئلة · المدة ${DUR} دقيقة · النجاح ≥ 60%</p><button class="btn p" onclick="startEx('final','${s.id}',${n})">${c.last?'إعادة المحاولة':'ابدأ الاختبار النهائي'}</button></div>`}
+function startEx(m,id,n){
+ const s=sub(id);let att=1;
+ if(m=='final'){const c=fst(s,n);if(c.st!='open'||c.pass)return toast('الاختبار غير متاح');att=c.mine.length+1}
+ X={m,s,n,att,ans:[],i:0,qs:m=='practice'?[...s.q].sort(()=>Math.random()-.5):s.q};
+ if(m=='final'){X.end=Date.now()+DUR*60000;X.iv=setInterval(tick,500)}
+ exV()}
+function tick(){if(!X||X.m!='final')return;const l=Math.max(0,X.end-Date.now()),e=$('tm');if(e)e.textContent='⏱ '+String(Math.floor(l/60000)).padStart(2,'0')+':'+String(Math.floor(l/1000)%60).padStart(2,'0');if(l<=0){toast('انتهى الوقت — تم التسليم تلقائياً');done(true)}}
+function exV(){
+ const q=X.qs[X.i],n=X.qs.length,a=X.ans.filter(v=>v!=null).length;
+ $('box').innerHTML=`<div class="card q"><div class="row"><b>${X.m=='final'?'المحاولة رقم '+X.att:'اختبار تجريبي'}</b><span>✅ ${a} مجابة · ⬜ ${n-a} غير مجابة</span>${X.m=='final'?'<span class="tm" id="tm"></span>':''}</div><div class="bar"><i style="width:${(X.i+1)/n*100}%"></i></div><p class="mu">سؤال ${X.i+1} من ${n}</p><h3>${q[0]}</h3>${q[1].map((o,j)=>`<button class="opt ${X.ans[X.i]===j?'sel':''}" onclick="pick(${j})">${o}</button>`).join('')}<div class="row"><button class="btn" onclick="go(-1)" ${X.i?'':'disabled'}>السابق</button>${X.i<n-1?'<button class="btn p" onclick="go(1)">التالي</button>':'<button class="btn ok" onclick="done()">إنهاء الاختبار</button>'}</div></div>`;tick()}
+function pick(j){X.ans[X.i]=j;exV()}
+function go(d){X.i+=d;exV()}
+function done(auto){
+ if(!X)return;if(!auto&&!confirm('هل أنت متأكد من إنهاء الاختبار؟'))return;
+ clearInterval(X.iv);const x=X,sc=x.qs.filter((q,i)=>x.ans[i]===q[2]).length,p=Math.round(sc/x.qs.length*100);X=null;
+ if(x.m=='final'){
+  if(fst(x.s,x.n).pass)return toast('لا يمكن الحفظ: اجتزت الاختبار سابقاً');
+  const r={c:me.code,s:x.s.id,l:x.n,e:'p1',a:x.att,sc,t:x.qs.length,ok:p>=60?1:0,d:Date.now()};R.push(r);ls.s('res',JSON.stringify(R));
+  $('box').innerHTML=resCard(x.s,x.n,r,r.ok?'':'يمكنك إعادة المحاولة طالما الاختبار مفتوح.')+(r.ok?'':`<div style="text-align:center"><button class="btn p" onclick="fin(sub('${x.s.id}'),${x.n})">متابعة</button></div>`);return}
+ $('box').innerHTML=`<div class="card" style="text-align:center"><h2>نتيجة الاختبار التجريبي</h2><p>الدرجة: <b>${sc} / ${x.qs.length}</b> · النسبة: <b>${p}%</b> · التقدير: <b>${G(p)}</b></p><div class="bar"><i style="width:${p}%;background:var(${p>=60?'--ok':'--bad'})"></i></div></div>`+x.qs.map((q,i)=>{const ok=x.ans[i]===q[2];return`<div class="card"><b>${i+1}. ${q[0]}</b><p class="${ok?'':'mu'}">${ok?'✅':'❌'} إجابتك: ${x.ans[i]==null?'لم تجب':q[1][x.ans[i]]}${ok?'':` — الصحيحة: <b>${q[1][q[2]]}</b>`}</p></div>`}).join('')+`<div style="text-align:center"><button class="btn p" onclick="startEx('practice','${x.s.id}',${x.n})">🔁 إعادة الاختبار</button></div>`}
+function results(){
+ const m=R.filter(r=>r.c==me.code).sort((a,b)=>b.d-a.d),ok=m.filter(r=>r.ok),avg=m.length?Math.round(m.reduce((a,r)=>a+pct(r),0)/m.length):0,tot=S.length,dn=new Set(ok.map(r=>r.s)).size;
+ if(!m.length)return $('app').innerHTML='<div class="card" style="text-align:center"><h2>لا توجد نتائج بعد</h2><a class="btn p" href="#home">ابدأ التعلم</a></div>';
+ $('app').innerHTML=`<h2>📊 نتائجي</h2><div class="stats"><div class="card"><b>${m.length}</b>اختبارات مكتملة</div><div class="card"><b>${ok.length}</b>ناجحة</div><div class="card"><b>${avg}%</b>متوسط النسب</div><div class="card"><b>${m.filter(r=>pct(r)>=90).length}</b>تقدير ممتاز</div></div><div class="card"><b>التقدم الدراسي</b><p>${dn} / ${tot} اختبارات نهائية مجتازة</p><div class="bar"><i style="width:${dn/tot*100}%;background:var(--ok)"></i></div></div>`+m.map(r=>{const s=sub(r.s),p=pct(r);return`<div class="card"><div class="row"><b>${s.ic} ${s.name} — ${s.L[r.l-1]}</b><span class="tag ${r.ok?'ok':'bad'}">${r.ok?'ناجح':'راسب'}</span></div><div class="row mu"><span>الدرجة ${r.sc}/${r.t} (${p}% — ${G(p)})</span><span>محاولة ${r.a} · ${fd(r.d)}</span></div><div class="bar"><i style="width:${p}%;background:var(${r.ok?'--ok':'--bad'})"></i></div>${r.ok?`<p><a class="btn ok" href="#cert/${r.s}/${r.l}">🏅 شهادة</a></p>`:''}</div>`}).join('')}
+function cert(id,n){
+ const s=sub(id),r=R.find(r=>r.c==me.code&&r.s==id&&r.l==n&&r.ok);
+ if(!r){location.hash='#results';return toast('الشهادة متاحة للناجحين فقط')}
+ $('app').innerHTML=`<div class="cert"><div>${SCH.min}<br>${SCH.dir}<br>${SCH.adm}</div><h3>${SCH.school}</h3><h1>🏅 شهادة اجتياز</h1><p>تشهد المدرسة بأن الطالب/ة</p><h2>${me.name}</h2><p>قد اجتاز/ت الاختبار النهائي في مادة <b>${s.name}</b><br>الدرس: ${s.L[n-1]}<br>بدرجة ${r.sc}/${r.t} — النسبة ${pct(r)}% — التقدير: ${G(pct(r))}</p><p>${SCH.cls} · العام الدراسي ${SCH.year}</p><div class="row" style="justify-content:space-around"><span>المعلم<br><b>${SCH.teacher}</b></span><span>مدير المدرسة<br><b>${SCH.principal}</b></span></div></div><p class="noprint" style="text-align:center"><button class="btn p" onclick="window.print()">🖨️ طباعة / حفظ PDF</button> <a class="btn" href="#results">رجوع</a></p>`}
+function admin(){
+ hdr();
+ if(!adm)return $('app').innerHTML=`<div class="card" style="max-width:380px;margin:40px auto"><h3>🔐 لوحة الإدارة (قراءة فقط)</h3><input id="pw" type="password" class="inp" style="width:100%" placeholder="كلمة المرور" onkeydown="if(event.key=='Enter')apw()"><p class="mu" style="font-size:.85rem">تجريبي: 262888</p><button class="btn p" onclick="apw()">دخول</button> <a class="btn" href="#home">رجوع</a></div>`;
+ const ok=R.filter(r=>r.ok).length,avg=Math.round(R.reduce((a,r)=>a+pct(r),0)/R.length);
+ $('app').innerHTML=`<h2>🛠️ لوحة الإدارة</h2><div class="stats"><div class="card"><b>${Object.keys(ST).length}</b>الطلاب</div><div class="card"><b>${R.length}</b>اختبارات مسجلة</div><div class="card"><b>${ok}</b>ناجحون</div><div class="card"><b>${R.length-ok}</b>راسبون</div><div class="card"><b>${avg}%</b>متوسط النسب</div></div><div class="card tw"><b>حالة الطلاب × المواد</b><table class="t"><tr><th>الطالب</th>${S.map(s=>`<th>${s.name}</th>`).join('')}</tr>${Object.entries(ST).map(([c,n])=>`<tr><td>${n} <small class="mu">${c}</small></td>${S.map(s=>{const m=R.filter(r=>r.c==c&&r.s==s.id);return`<td>${m.some(r=>r.ok)?'🏆 ناجح':m.length?'❌ راسب':'—'}</td>`}).join('')}</tr>`).join('')}</table></div><div class="card"><b>السجل الكامل</b><br><input class="inp" placeholder="🔍 بحث في السجل" oninput="q0=this.value;alog()"><div class="tw"><table class="t"><thead><tr><th>التاريخ</th><th>الكود</th><th>الاسم</th><th>المادة</th><th>الدرس</th><th>الدرجة</th><th>النسبة</th><th>محاولة</th><th>النتيجة</th></tr></thead><tbody id="lg"></tbody></table></div></div>`;q0='';alog()}
+function apw(){if($('pw').value=='262888'){adm=true;admin()}else toast('كلمة مرور خاطئة')}
+function alog(){$('lg').innerHTML=[...R].sort((a,b)=>b.d-a.d).map(r=>{const s=sub(r.s);return[fd(r.d),r.c,ST[r.c],s.name,'درس '+r.l,r.sc+'/'+r.t,pct(r)+'%',r.a,r.ok?'ناجح':'راسب']}).filter(x=>x.join(' ').includes(q0)).map(x=>'<tr>'+x.map(v=>`<td>${v}</td>`).join('')+'</tr>').join('')}
+addEventListener('hashchange',nav);nav();
+</script>
+</body>
+</html>

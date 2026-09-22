@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>اختبار وورد</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh; padding: 20px; color: #333;
+}
+.container { max-width: 700px; margin: 0 auto; }
+.header { text-align: center; color: #fff; padding: 30px 20px; }
+.header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+.header .meta { font-size: 14px; opacity: 0.9; }
+.progress-bar { background: rgba(255,255,255,0.3); border-radius: 10px; height: 8px; margin: 20px 0; overflow: hidden; }
+.progress-fill { background: #fff; height: 100%; width: 0%; transition: width 0.4s ease; border-radius: 10px; }
+.question { background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: none; }
+.question.active { display: block; }
+.q-header { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; color: #888; }
+.q-number { font-weight: 600; color: #667eea; }
+.q-text { font-size: 18px; font-weight: 600; line-height: 1.5; margin-bottom: 25px; color: #222; }
+.options { display: flex; flex-direction: column; gap: 12px; }
+.option-wrapper { display: flex; flex-direction: column; }
+.option {
+  display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
+  border: 2px solid #e8e8e8; border-radius: 12px; background: #fafafa;
+  cursor: pointer; transition: all 0.2s; text-align: left; font-size: 15px; width: 100%;
+}
+[dir="rtl"] .option { text-align: right; flex-direction: row-reverse; }
+.option:hover:not(.disabled) { border-color: #667eea; background: #f5f3ff; }
+.option.selected { border-color: #667eea; background: #ede9fe; }
+.option.correct { border-color: #22c55e; background: #dcfce7; }
+.option.incorrect { border-color: #ef4444; background: #fee2e2; }
+.option.disabled { cursor: default; }
+.option.show-correct { border-color: #22c55e; background: #dcfce7; }
+.opt-label {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px; border-radius: 50%; background: #e8e8e8;
+  font-weight: 700; font-size: 14px; flex-shrink: 0;
+}
+.option.selected .opt-label { background: #667eea; color: #fff; }
+.option.correct .opt-label { background: #22c55e; color: #fff; }
+.option.incorrect .opt-label { background: #ef4444; color: #fff; }
+.option.show-correct .opt-label { background: #22c55e; color: #fff; }
+.opt-text { padding-top: 5px; line-height: 1.5; }
+
+/* Individual option feedback */
+.option-feedback {
+  margin: 8px 0 4px 46px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+[dir="rtl"] .option-feedback { margin-left: 0; margin-right: 46px; }
+.option-feedback.correct-feedback {
+  background: #dcfce7;
+  border-left: 3px solid #22c55e;
+}
+.option-feedback.incorrect-feedback {
+  background: #fef3f2;
+  border-left: 3px solid #fca5a5;
+}
+[dir="rtl"] .option-feedback.correct-feedback,
+[dir="rtl"] .option-feedback.incorrect-feedback {
+  border-left: none;
+  border-right: 3px solid;
+}
+[dir="rtl"] .option-feedback.correct-feedback { border-right-color: #22c55e; }
+[dir="rtl"] .option-feedback.incorrect-feedback { border-right-color: #fca5a5; }
+.feedback-status {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.feedback-status.correct { color: #166534; }
+.feedback-status.incorrect { color: #991b1b; }
+.feedback-rationale { color: #444; }
+
+/* Hint box */
+.hint-box {
+  margin: 12px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+}
+.hint-toggle {
+  width: 100%;
+  padding: 10px 16px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hint-toggle:hover { background: #fef3c7; }
+.hint-content {
+  padding: 0 16px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s, padding 0.3s;
+  font-size: 14px;
+  color: #78350f;
+  line-height: 1.5;
+}
+.hint-box.show .hint-content {
+  padding: 0 16px 12px;
+  max-height: 200px;
+}
+
+.next-btn {
+  margin-top: 20px; width: 100%; padding: 14px;
+  background: linear-gradient(135deg, #667eea, #764ba2); color: #fff; border: none;
+  border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.next-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.4); }
+.hidden { display: none !important; }
+.results { background: #fff; border-radius: 16px; padding: 40px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: none; }
+.results.active { display: block; }
+.results h2 { font-size: 28px; margin-bottom: 10px; color: #333; }
+.results .score { font-size: 64px; font-weight: 700; color: #667eea; margin: 20px 0; }
+.results .score-text { font-size: 18px; color: #666; margin-bottom: 30px; }
+.restart-btn {
+  padding: 14px 40px; background: linear-gradient(135deg, #667eea, #764ba2);
+  color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; cursor: pointer;
+}
+
+/* Math CSS */
+.math, .math-block { font-family: "Cambria Math", "Times New Roman", Times, serif; font-style: italic; }
+.math-block { display: block; text-align: center; margin: 10px 0; font-size: 110%; }
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 3px; font-size: 0.9em; }
+.frac-num { border-bottom: 1px solid currentColor; padding: 0 4px 2px; line-height: 1.2; }
+.frac-den { padding: 2px 4px 0; line-height: 1.2; }
+.sqrt { white-space: nowrap; }
+.sqrt-content { border-top: 1px solid currentColor; padding: 0 3px; margin-left: 2px; }
+sup, sub { font-size: 0.75em; }
+sup { vertical-align: super; }
+sub { vertical-align: sub; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>اختبار وورد</h1>
+    <div class="meta">15 أسئلة</div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+  <div id="quiz-container">
+        <div class="question" data-index="0">
+          <div class="q-header">
+            <span class="q-number">سؤال 1</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">ما هو الوصف الأدق لبرنامج Microsoft Word بناءً على ما ورد في الدليل؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">فكر في الوظيفة الأساسية للبرنامج المتعلقة بالكتابة والتأليف.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="true" data-rationale="يعرف البرنامج كأداة قوية لمعالجة النصوص وتنسيقها وإنشاء وثائق متكاملة مثل الكتب والتقارير.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">برنامج يختص بتحرير وتعديل النصوص والنشر المكتبي وإنشاء الكتب.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يعرف البرنامج كأداة قوية لمعالجة النصوص وتنسيقها وإنشاء وثائق متكاملة مثل الكتب والتقارير.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="هذه وظيفة برامج الضغط والارشفة، بينما يركز Word على المحتوى النصي وتنسيقه.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">برنامج مخصص فقط لضغط الملفات وتخزينها بمساحات صغيرة.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذه وظيفة برامج الضغط والارشفة، بينما يركز Word على المحتوى النصي وتنسيقه.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="هذا الوصف ينطبق أكثر على برامج الجداول الحسابية مثل Excel وليس معالج النصوص.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">برنامج متخصص في إنشاء الجداول الحسابية المعقدة والرسوم البيانية فقط.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا الوصف ينطبق أكثر على برامج الجداول الحسابية مثل Excel وليس معالج النصوص.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="برنامج Word هو تطبيق ضمن حزمة Office وليس نظام تشغيل مثل Windows.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">نظام تشغيل أساسي للحاسب الآلي لا يمكن العمل بدونه.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">برنامج Word هو تطبيق ضمن حزمة Office وليس نظام تشغيل مثل Windows.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="1">
+          <div class="q-header">
+            <span class="q-number">سؤال 2</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">يعمل برنامج Microsoft Word على نظامي التشغيل Windows و Android فقط.</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">راجع قسم إمكانيات ومزايا البرنامج في الدليل.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="وفقاً للنص، يعد التوافق مع Windows و Android من الإمكانيات المذكورة للبرنامج.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">خطأ</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">وفقاً للنص، يعد التوافق مع Windows و Android من الإمكانيات المذكورة للبرنامج.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="ذكرت المصادر صراحة أن البرنامج يدعم العمل على هذين النظامين كجزء من مميزاته.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">صواب</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">ذكرت المصادر صراحة أن البرنامج يدعم العمل على هذين النظامين كجزء من مميزاته.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="2">
+          <div class="q-header">
+            <span class="q-number">سؤال 3</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">أي من مكونات الشاشة الافتتاحية يحتوي على اسم البرنامج واسم الملف الحالي النشط؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">يوجد هذا الشريط في أعلى نافذة البرنامج.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="يظهر هذا الشريط في الأسفل ليعرض عدد الصفحات والكلمات واللغة.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">شريط المعلومات</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يظهر هذا الشريط في الأسفل ليعرض عدد الصفحات والكلمات واللغة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="شريط العنوان هو الجزء العلوي الذي يحدد هوية الملف والبرنامج المفتوح حالياً.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">شريط العنوان</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">شريط العنوان هو الجزء العلوي الذي يحدد هوية الملف والبرنامج المفتوح حالياً.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="يستخدم هذا الشريط للتحرك للأعلى والأسفل داخل الصفحة ولا يعرض أسماء.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">شريط التمرير الرأسي</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا الشريط للتحرك للأعلى والأسفل داخل الصفحة ولا يعرض أسماء.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="يحتوي هذا الشريط على أسماء القوائم الرئيسية مثل Home و Insert.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">شريط التبويبات</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يحتوي هذا الشريط على أسماء القوائم الرئيسية مثل Home و Insert.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="3">
+          <div class="q-header">
+            <span class="q-number">سؤال 4</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">أين يمكن للطالب العثور على معلومات حول عدد الصفحات الحالية ولغة الكتابة؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">ابحث عن الشريط الذي يقع في الجزء السفلي من النافذة.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="يحتوي هذا الشريط على أيقونات الحفظ والتراجع السريع فقط.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">شريط الوصول السريع</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يحتوي هذا الشريط على أيقونات الحفظ والتراجع السريع فقط.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="يعرض شريط المعلومات (في أسفل الشاشة) إحصائيات المستند مثل حالة اللغة ورقم الصفحة.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">شريط المعلومات</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يعرض شريط المعلومات (في أسفل الشاشة) إحصائيات المستند مثل حالة اللغة ورقم الصفحة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="منطقة العمل هي المساحة البيضاء المخصصة للكتابة وإدراج الكائنات.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">منطقة العمل</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">منطقة العمل هي المساحة البيضاء المخصصة للكتابة وإدراج الكائنات.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="تستخدم المسطرة لتحديد عرض الصفحة والهوامش وليس لإحصاء الصفحات.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">المسطرة الأفقية</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">تستخدم المسطرة لتحديد عرض الصفحة والهوامش وليس لإحصاء الصفحات.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="4">
+          <div class="q-header">
+            <span class="q-number">سؤال 5</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">ماذا يحدث عند الضغط على مفتاحي <span class="math">Shift+Enter</span> أثناء الكتابة؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">فكر في الفرق بين السطر الجديد والفقرة الجديدة.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="الحفظ له اختصارات أخرى، ومفتاح Enter لا علاقة له بعملية الحفظ.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">حفظ المستند تلقائياً في ذاكرة RAM.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">الحفظ له اختصارات أخرى، ومفتاح Enter لا علاقة له بعملية الحفظ.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="يستخدم هذا الاختصار لإدراج فاصل أسطر يدوي دون إنهاء الفقرة الحالية.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">الانتقال لسطر جديد ولكن مع البقاء داخل نفس الفقرة.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا الاختصار لإدراج فاصل أسطر يدوي دون إنهاء الفقرة الحالية.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="بدء فقرة جديدة يتطلب الضغط على مفتاح Enter وحده.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">الانتقال لسطر جديد مع بدء فقرة جديدة تماماً.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">بدء فقرة جديدة يتطلب الضغط على مفتاح Enter وحده.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="هذا الاختصار لا يؤدي لوظيفة الحذف.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">مسح السطر الحالي بالكامل.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا الاختصار لا يؤدي لوظيفة الحذف.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="5">
+          <div class="q-header">
+            <span class="q-number">سؤال 6</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">عند العمل على مستند جديد لم يتم حفظه بعد، أين يتم تخزين النص المكتوب بصفة مؤقتة؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">تذكر الذاكرة التي تفقد محتوياتها بمجرد إغلاق البرنامج أو انقطاع الكهرباء.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="شريط المهام هو جزء من نظام التشغيل يعرض البرامج المفتوحة ولا يخزن محتواها.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">شريط المهام</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">شريط المهام هو جزء من نظام التشغيل يعرض البرامج المفتوحة ولا يخزن محتواها.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="لا ينتقل الملف للقرص الصلب إلا بعد تنفيذ أمر الحفظ واختيار مكان التخزين.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">القرص الصلب (Hard Desk)</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">لا ينتقل الملف للقرص الصلب إلا بعد تنفيذ أمر الحفظ واختيار مكان التخزين.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="يقوم المعالج بمعالجة البيانات وليس تخزين الوثائق النصية.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">معالج الحاسب</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يقوم المعالج بمعالجة البيانات وليس تخزين الوثائق النصية.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="true" data-rationale="تستقبل الذاكرة العشوائية RAM البيانات أثناء الكتابة وتفقدها إذا انقطع التيار قبل الحفظ.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">الذاكرة المؤقتة (RAM)</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">تستقبل الذاكرة العشوائية RAM البيانات أثناء الكتابة وتفقدها إذا انقطع التيار قبل الحفظ.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="6">
+          <div class="q-header">
+            <span class="q-number">سؤال 7</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">لا يوجد أي فرق بين استخدام أمر 'Save' وأمر 'Save As' عند حفظ مستند لأول مرة.</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">راجع ملاحظة 'تنبيه هام' في صفحة حفظ المستندات.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="رغم اختلاف وظائفهما لاحقاً، إلا أنهما يتصرفان بنفس الطريقة تماماً عند الحفظ الابتدائي للملف.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">خطأ</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">رغم اختلاف وظائفهما لاحقاً، إلا أنهما يتصرفان بنفس الطريقة تماماً عند الحفظ الابتدائي للملف.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="في المرة الأولى، يطلب البرنامج تحديد الاسم والمكان في كلتا الحالتين، لذا لا يوجد فرق إجرائي.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">صواب</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">في المرة الأولى، يطلب البرنامج تحديد الاسم والمكان في كلتا الحالتين، لذا لا يوجد فرق إجرائي.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="7">
+          <div class="q-header">
+            <span class="q-number">سؤال 8</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">أي من الامتدادات التالية يستخدم لحفظ المستند بتنسيق يتوافق مع إصدارات Word القديمة (97-2003)؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">ابحث عن الامتداد الذي يتكون من ثلاث أحرف فقط وذكر في قائمة صور حفظ الملفات.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="true" data-rationale="الامتداد .doc هو التنسيق القياسي الذي كانت تستخدمه إصدارات Word القديمة قبل عام 2007.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">.doc</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">الامتداد .doc هو التنسيق القياسي الذي كانت تستخدمه إصدارات Word القديمة قبل عام 2007.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="يستخدم هذا الامتداد للقوالب (Templates) الحديثة وليس المستندات العادية.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">.dotx</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا الامتداد للقوالب (Templates) الحديثة وليس المستندات العادية.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="هذا هو الامتداد الحديث للمستندات في الإصدارات الجديدة.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">.docx</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا هو الامتداد الحديث للمستندات في الإصدارات الجديدة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="هذا التنسيق يستخدم للمستندات الثابتة غير القابلة للتعديل بسهولة.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">.pdf</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا التنسيق يستخدم للمستندات الثابتة غير القابلة للتعديل بسهولة.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="8">
+          <div class="q-header">
+            <span class="q-number">سؤال 9</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">لإجراء أي عملية تنسيق (مثل تغيير لون الخط أو حجمه) على نص مكتوب، يجب أولاً القيام بـ:</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">فكر في الخطوة الأساسية التي تسبق الضغط على أي أيقونة تنسيق.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="الطابعة مطلوبة للمخرجات الورقية وليس لتنسيق النص على الشاشة.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">توصيل الطابعة بالحاسب.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">الطابعة مطلوبة للمخرجات الورقية وليس لتنسيق النص على الشاشة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="الحفظ يحمي الملف ولكنه ليس شرطاً لتغيير شكل الخط.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">حفظ الملف باسم جديد.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">الحفظ يحمي الملف ولكنه ليس شرطاً لتغيير شكل الخط.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="هذا الإجراء لا علاقة له بتنسيق المحتوى.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">إغلاق البرنامج وإعادة فتحه.</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا الإجراء لا علاقة له بتنسيق المحتوى.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="true" data-rationale="يجب إخبار البرنامج بأي جزء من النص نريد تعديله عبر عملية التظليل أو التحديد.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">تحديد النص (Selection).</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يجب إخبار البرنامج بأي جزء من النص نريد تعديله عبر عملية التظليل أو التحديد.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="9">
+          <div class="q-header">
+            <span class="q-number">سؤال 10</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">خاصية الترقيم الرقمي (Numbering) والترقيم النقطي (Bullets) توجد ضمن تبويب:</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">هذه الأدوات جزء من تنسيقات الفقرات الأساسية.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="true" data-rationale="يحتوي تبويب الصفحة الرئيسية (Home) على مجموعة Paragraph التي تضم أدوات التعداد.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">Home</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يحتوي تبويب الصفحة الرئيسية (Home) على مجموعة Paragraph التي تضم أدوات التعداد.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="يستخدم هذا التبويب لإدراج عناصر خارجية مثل الصور والجداول.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">Insert</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا التبويب لإدراج عناصر خارجية مثل الصور والجداول.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="يستخدم هذا التبويب للتحكم في طرق عرض المستند على الشاشة.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">View</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا التبويب للتحكم في طرق عرض المستند على الشاشة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="يحتوي هذا التبويب على أوامر إدارة الملف مثل الفتح والحفظ والطباعة.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">File</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يحتوي هذا التبويب على أوامر إدارة الملف مثل الفتح والحفظ والطباعة.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="10">
+          <div class="q-header">
+            <span class="q-number">سؤال 11</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">يظهر النص المكتوب في 'رأس الصفحة' (Header) في أعلى الصفحة الأولى فقط من المستند.</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">تذكر كيف تظهر أرقام الصفحات أو عناوين الكتب في الأوراق.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="رأس الصفحة هو نص يتكرر آلياً في أعلى كافة صفحات المستند وليس الأولى فقط.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">صواب</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">رأس الصفحة هو نص يتكرر آلياً في أعلى كافة صفحات المستند وليس الأولى فقط.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="من مميزات الرأس والتذييل ظهورهما بشكل تلقائي ومتكرر في كل صفحات الملف.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">خطأ</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">من مميزات الرأس والتذييل ظهورهما بشكل تلقائي ومتكرر في كل صفحات الملف.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="11">
+          <div class="q-header">
+            <span class="q-number">سؤال 12</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">لإدراج جدول في المستند، نختار أيقونة Table من تبويب:</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">فكر في التبويب الذي نستخدمه عندما نريد 'إضافة' شيء جديد للمساحة البيضاء.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="يستخدم Design لتغيير نمط وشكل الجدول بعد إدراجه وليس لعملية الإدراج نفسها.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">Design</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم Design لتغيير نمط وشكل الجدول بعد إدراجه وليس لعملية الإدراج نفسها.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="يركز تبويب Home على تنسيق النصوص والفقرات الجاهزة.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">Home</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يركز تبويب Home على تنسيق النصوص والفقرات الجاهزة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="true" data-rationale="تبويب إدراج (Insert) هو المسؤول عن إضافة كافة الكائنات الجديدة للمستند كالجداول والصور.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">Insert</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">تبويب إدراج (Insert) هو المسؤول عن إضافة كافة الكائنات الجديدة للمستند كالجداول والصور.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="يستخدم Review للتدقيق الإملائي والتعليقات.">
+            <span class="opt-label">D</span>
+            <span class="opt-text">Review</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم Review للتدقيق الإملائي والتعليقات.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="12">
+          <div class="q-header">
+            <span class="q-number">سؤال 13</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">أي من الخيارات التالية في إعدادات الطباعة يستخدم لتحديد اتجاه الورقة لتكون 'عرضية'؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">ابحث عن المصطلح المرتبط بالمناظر الطبيعية العريضة.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="true" data-rationale="كلمة Landscape تعني الاتجاه العرضي (الأفقي) للورقة عند الطباعة.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">Landscape Orientation</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">كلمة Landscape تعني الاتجاه العرضي (الأفقي) للورقة عند الطباعة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="يتحكم هذا الخيار في الطباعة على وجه واحد أو وجهين ولا يغير اتجاه الورقة.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">Print One Sided</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يتحكم هذا الخيار في الطباعة على وجه واحد أو وجهين ولا يغير اتجاه الورقة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="يستخدم هذا الخيار للتحكم في مساحة الهوامش المحيطة بالنص.">
+            <span class="opt-label">C</span>
+            <span class="opt-text">Custom Margins</span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا الخيار للتحكم في مساحة الهوامش المحيطة بالنص.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="هذا الخيار يجعل الورقة في وضع طولي (رأسي).">
+            <span class="opt-label">D</span>
+            <span class="opt-text">Portrait Orientation</span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا الخيار يجعل الورقة في وضع طولي (رأسي).</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="13">
+          <div class="q-header">
+            <span class="q-number">سؤال 14</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">ما هو اختصار لوحة المفاتيح السريع لفتح نافذة 'الطباعة' (Print)؟</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">يرتبط الحرف الأول من الكلمة الإنجليزية للطباعة بهذا الاختصار.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="false" data-rationale="هذا الاختصار مخصص لحفظ المستند (Save).">
+            <span class="opt-label">A</span>
+            <span class="opt-text"><span class="math">Ctrl+S</span></span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">هذا الاختصار مخصص لحفظ المستند (Save).</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="true" data-rationale="حرف P هو الحرف الأول من كلمة Print، وهو الاختصار العالمي للطباعة.">
+            <span class="opt-label">B</span>
+            <span class="opt-text"><span class="math">Ctrl+P</span></span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">حرف P هو الحرف الأول من كلمة Print، وهو الاختصار العالمي للطباعة.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="C" data-correct="false" data-rationale="يستخدم هذا الاختصار لإنشاء مستند جديد (New).">
+            <span class="opt-label">C</span>
+            <span class="opt-text"><span class="math">Ctrl+N</span></span>
+          </button>
+          <div class="option-feedback hidden" data-for="C">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا الاختصار لإنشاء مستند جديد (New).</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="D" data-correct="false" data-rationale="يستخدم هذا الاختصار لفتح ملف موجود مسبقاً (Open).">
+            <span class="opt-label">D</span>
+            <span class="opt-text"><span class="math">Ctrl+O</span></span>
+          </button>
+          <div class="option-feedback hidden" data-for="D">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يستخدم هذا الاختصار لفتح ملف موجود مسبقاً (Open).</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      
+        <div class="question" data-index="14">
+          <div class="q-header">
+            <span class="q-number">سؤال 15</span>
+            <span class="q-of">/ 15</span>
+          </div>
+          <div class="q-text">يمكن كتابة نصوص بلغات مختلفة داخل مستند Word واحد.</div>
+          
+        <div class="hint-box">
+          <button class="hint-toggle" onclick="this.parentElement.classList.toggle('show')">
+            💡 Hint
+          </button>
+          <div class="hint-content">فكر في قدرتك على كتابة اللغة العربية والإنجليزية في نفس البحث.</div>
+        </div>
+      
+          <div class="options">
+        <div class="option-wrapper">
+          <button class="option" data-label="A" data-correct="true" data-rationale="تعد ميزة تعدد اللغات من المزايا الأساسية للبرنامج المذكورة في الدليل.">
+            <span class="opt-label">A</span>
+            <span class="opt-text">صواب</span>
+          </button>
+          <div class="option-feedback hidden" data-for="A">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">تعد ميزة تعدد اللغات من المزايا الأساسية للبرنامج المذكورة في الدليل.</div>
+          </div>
+        </div>
+      
+        <div class="option-wrapper">
+          <button class="option" data-label="B" data-correct="false" data-rationale="يدعم البرنامج الكتابة بلغات متنوعة وتغيير اتجاه النص وفقاً للغة.">
+            <span class="opt-label">B</span>
+            <span class="opt-text">خطأ</span>
+          </button>
+          <div class="option-feedback hidden" data-for="B">
+            <div class="feedback-status"></div>
+            <div class="feedback-rationale">يدعم البرنامج الكتابة بلغات متنوعة وتغيير اتجاه النص وفقاً للغة.</div>
+          </div>
+        </div>
+      </div>
+          <button class="next-btn hidden">السؤال التالي ←</button>
+        </div>
+      </div>
+  <div class="results" id="results">
+    <h2>اكتمل الاختبار!</h2>
+    <div class="score" id="score">0%</div>
+    <div class="score-text" id="score-text"></div>
+    <button class="restart-btn" onclick="restart()">حاول مرة أخرى</button>
+  </div>
+</div>
+<script>
+const quizData = [{"question":"ما هو الوصف الأدق لبرنامج Microsoft Word بناءً على ما ورد في الدليل؟","hint":"فكر في الوظيفة الأساسية للبرنامج المتعلقة بالكتابة والتأليف.","options":[{"label":"A","text":"برنامج يختص بتحرير وتعديل النصوص والنشر المكتبي وإنشاء الكتب.","isCorrect":true,"rationale":"يعرف البرنامج كأداة قوية لمعالجة النصوص وتنسيقها وإنشاء وثائق متكاملة مثل الكتب والتقارير."},{"label":"B","text":"برنامج مخصص فقط لضغط الملفات وتخزينها بمساحات صغيرة.","isCorrect":false,"rationale":"هذه وظيفة برامج الضغط والارشفة، بينما يركز Word على المحتوى النصي وتنسيقه."},{"label":"C","text":"برنامج متخصص في إنشاء الجداول الحسابية المعقدة والرسوم البيانية فقط.","isCorrect":false,"rationale":"هذا الوصف ينطبق أكثر على برامج الجداول الحسابية مثل Excel وليس معالج النصوص."},{"label":"D","text":"نظام تشغيل أساسي للحاسب الآلي لا يمكن العمل بدونه.","isCorrect":false,"rationale":"برنامج Word هو تطبيق ضمن حزمة Office وليس نظام تشغيل مثل Windows."}]},{"question":"يعمل برنامج Microsoft Word على نظامي التشغيل Windows و Android فقط.","hint":"راجع قسم إمكانيات ومزايا البرنامج في الدليل.","options":[{"label":"A","text":"خطأ","isCorrect":false,"rationale":"وفقاً للنص، يعد التوافق مع Windows و Android من الإمكانيات المذكورة للبرنامج."},{"label":"B","text":"صواب","isCorrect":true,"rationale":"ذكرت المصادر صراحة أن البرنامج يدعم العمل على هذين النظامين كجزء من مميزاته."}]},{"question":"أي من مكونات الشاشة الافتتاحية يحتوي على اسم البرنامج واسم الملف الحالي النشط؟","hint":"يوجد هذا الشريط في أعلى نافذة البرنامج.","options":[{"label":"A","text":"شريط المعلومات","isCorrect":false,"rationale":"يظهر هذا الشريط في الأسفل ليعرض عدد الصفحات والكلمات واللغة."},{"label":"B","text":"شريط العنوان","isCorrect":true,"rationale":"شريط العنوان هو الجزء العلوي الذي يحدد هوية الملف والبرنامج المفتوح حالياً."},{"label":"C","text":"شريط التمرير الرأسي","isCorrect":false,"rationale":"يستخدم هذا الشريط للتحرك للأعلى والأسفل داخل الصفحة ولا يعرض أسماء."},{"label":"D","text":"شريط التبويبات","isCorrect":false,"rationale":"يحتوي هذا الشريط على أسماء القوائم الرئيسية مثل Home و Insert."}]},{"question":"أين يمكن للطالب العثور على معلومات حول عدد الصفحات الحالية ولغة الكتابة؟","hint":"ابحث عن الشريط الذي يقع في الجزء السفلي من النافذة.","options":[{"label":"A","text":"شريط الوصول السريع","isCorrect":false,"rationale":"يحتوي هذا الشريط على أيقونات الحفظ والتراجع السريع فقط."},{"label":"B","text":"شريط المعلومات","isCorrect":true,"rationale":"يعرض شريط المعلومات (في أسفل الشاشة) إحصائيات المستند مثل حالة اللغة ورقم الصفحة."},{"label":"C","text":"منطقة العمل","isCorrect":false,"rationale":"منطقة العمل هي المساحة البيضاء المخصصة للكتابة وإدراج الكائنات."},{"label":"D","text":"المسطرة الأفقية","isCorrect":false,"rationale":"تستخدم المسطرة لتحديد عرض الصفحة والهوامش وليس لإحصاء الصفحات."}]},{"question":"ماذا يحدث عند الضغط على مفتاحي $Shift+Enter$ أثناء الكتابة؟","hint":"فكر في الفرق بين السطر الجديد والفقرة الجديدة.","options":[{"label":"A","text":"حفظ المستند تلقائياً في ذاكرة RAM.","isCorrect":false,"rationale":"الحفظ له اختصارات أخرى، ومفتاح Enter لا علاقة له بعملية الحفظ."},{"label":"B","text":"الانتقال لسطر جديد ولكن مع البقاء داخل نفس الفقرة.","isCorrect":true,"rationale":"يستخدم هذا الاختصار لإدراج فاصل أسطر يدوي دون إنهاء الفقرة الحالية."},{"label":"C","text":"الانتقال لسطر جديد مع بدء فقرة جديدة تماماً.","isCorrect":false,"rationale":"بدء فقرة جديدة يتطلب الضغط على مفتاح Enter وحده."},{"label":"D","text":"مسح السطر الحالي بالكامل.","isCorrect":false,"rationale":"هذا الاختصار لا يؤدي لوظيفة الحذف."}]},{"question":"عند العمل على مستند جديد لم يتم حفظه بعد، أين يتم تخزين النص المكتوب بصفة مؤقتة؟","hint":"تذكر الذاكرة التي تفقد محتوياتها بمجرد إغلاق البرنامج أو انقطاع الكهرباء.","options":[{"label":"A","text":"شريط المهام","isCorrect":false,"rationale":"شريط المهام هو جزء من نظام التشغيل يعرض البرامج المفتوحة ولا يخزن محتواها."},{"label":"B","text":"القرص الصلب (Hard Desk)","isCorrect":false,"rationale":"لا ينتقل الملف للقرص الصلب إلا بعد تنفيذ أمر الحفظ واختيار مكان التخزين."},{"label":"C","text":"معالج الحاسب","isCorrect":false,"rationale":"يقوم المعالج بمعالجة البيانات وليس تخزين الوثائق النصية."},{"label":"D","text":"الذاكرة المؤقتة (RAM)","isCorrect":true,"rationale":"تستقبل الذاكرة العشوائية RAM البيانات أثناء الكتابة وتفقدها إذا انقطع التيار قبل الحفظ."}]},{"question":"لا يوجد أي فرق بين استخدام أمر 'Save' وأمر 'Save As' عند حفظ مستند لأول مرة.","hint":"راجع ملاحظة 'تنبيه هام' في صفحة حفظ المستندات.","options":[{"label":"A","text":"خطأ","isCorrect":false,"rationale":"رغم اختلاف وظائفهما لاحقاً، إلا أنهما يتصرفان بنفس الطريقة تماماً عند الحفظ الابتدائي للملف."},{"label":"B","text":"صواب","isCorrect":true,"rationale":"في المرة الأولى، يطلب البرنامج تحديد الاسم والمكان في كلتا الحالتين، لذا لا يوجد فرق إجرائي."}]},{"question":"أي من الامتدادات التالية يستخدم لحفظ المستند بتنسيق يتوافق مع إصدارات Word القديمة (97-2003)؟","hint":"ابحث عن الامتداد الذي يتكون من ثلاث أحرف فقط وذكر في قائمة صور حفظ الملفات.","options":[{"label":"A","text":".doc","isCorrect":true,"rationale":"الامتداد .doc هو التنسيق القياسي الذي كانت تستخدمه إصدارات Word القديمة قبل عام 2007."},{"label":"B","text":".dotx","isCorrect":false,"rationale":"يستخدم هذا الامتداد للقوالب (Templates) الحديثة وليس المستندات العادية."},{"label":"C","text":".docx","isCorrect":false,"rationale":"هذا هو الامتداد الحديث للمستندات في الإصدارات الجديدة."},{"label":"D","text":".pdf","isCorrect":false,"rationale":"هذا التنسيق يستخدم للمستندات الثابتة غير القابلة للتعديل بسهولة."}]},{"question":"لإجراء أي عملية تنسيق (مثل تغيير لون الخط أو حجمه) على نص مكتوب، يجب أولاً القيام بـ:","hint":"فكر في الخطوة الأساسية التي تسبق الضغط على أي أيقونة تنسيق.","options":[{"label":"A","text":"توصيل الطابعة بالحاسب.","isCorrect":false,"rationale":"الطابعة مطلوبة للمخرجات الورقية وليس لتنسيق النص على الشاشة."},{"label":"B","text":"حفظ الملف باسم جديد.","isCorrect":false,"rationale":"الحفظ يحمي الملف ولكنه ليس شرطاً لتغيير شكل الخط."},{"label":"C","text":"إغلاق البرنامج وإعادة فتحه.","isCorrect":false,"rationale":"هذا الإجراء لا علاقة له بتنسيق المحتوى."},{"label":"D","text":"تحديد النص (Selection).","isCorrect":true,"rationale":"يجب إخبار البرنامج بأي جزء من النص نريد تعديله عبر عملية التظليل أو التحديد."}]},{"question":"خاصية الترقيم الرقمي (Numbering) والترقيم النقطي (Bullets) توجد ضمن تبويب:","hint":"هذه الأدوات جزء من تنسيقات الفقرات الأساسية.","options":[{"label":"A","text":"Home","isCorrect":true,"rationale":"يحتوي تبويب الصفحة الرئيسية (Home) على مجموعة Paragraph التي تضم أدوات التعداد."},{"label":"B","text":"Insert","isCorrect":false,"rationale":"يستخدم هذا التبويب لإدراج عناصر خارجية مثل الصور والجداول."},{"label":"C","text":"View","isCorrect":false,"rationale":"يستخدم هذا التبويب للتحكم في طرق عرض المستند على الشاشة."},{"label":"D","text":"File","isCorrect":false,"rationale":"يحتوي هذا التبويب على أوامر إدارة الملف مثل الفتح والحفظ والطباعة."}]},{"question":"يظهر النص المكتوب في 'رأس الصفحة' (Header) في أعلى الصفحة الأولى فقط من المستند.","hint":"تذكر كيف تظهر أرقام الصفحات أو عناوين الكتب في الأوراق.","options":[{"label":"A","text":"صواب","isCorrect":false,"rationale":"رأس الصفحة هو نص يتكرر آلياً في أعلى كافة صفحات المستند وليس الأولى فقط."},{"label":"B","text":"خطأ","isCorrect":true,"rationale":"من مميزات الرأس والتذييل ظهورهما بشكل تلقائي ومتكرر في كل صفحات الملف."}]},{"question":"لإدراج جدول في المستند، نختار أيقونة Table من تبويب:","hint":"فكر في التبويب الذي نستخدمه عندما نريد 'إضافة' شيء جديد للمساحة البيضاء.","options":[{"label":"A","text":"Design","isCorrect":false,"rationale":"يستخدم Design لتغيير نمط وشكل الجدول بعد إدراجه وليس لعملية الإدراج نفسها."},{"label":"B","text":"Home","isCorrect":false,"rationale":"يركز تبويب Home على تنسيق النصوص والفقرات الجاهزة."},{"label":"C","text":"Insert","isCorrect":true,"rationale":"تبويب إدراج (Insert) هو المسؤول عن إضافة كافة الكائنات الجديدة للمستند كالجداول والصور."},{"label":"D","text":"Review","isCorrect":false,"rationale":"يستخدم Review للتدقيق الإملائي والتعليقات."}]},{"question":"أي من الخيارات التالية في إعدادات الطباعة يستخدم لتحديد اتجاه الورقة لتكون 'عرضية'؟","hint":"ابحث عن المصطلح المرتبط بالمناظر الطبيعية العريضة.","options":[{"label":"A","text":"Landscape Orientation","isCorrect":true,"rationale":"كلمة Landscape تعني الاتجاه العرضي (الأفقي) للورقة عند الطباعة."},{"label":"B","text":"Print One Sided","isCorrect":false,"rationale":"يتحكم هذا الخيار في الطباعة على وجه واحد أو وجهين ولا يغير اتجاه الورقة."},{"label":"C","text":"Custom Margins","isCorrect":false,"rationale":"يستخدم هذا الخيار للتحكم في مساحة الهوامش المحيطة بالنص."},{"label":"D","text":"Portrait Orientation","isCorrect":false,"rationale":"هذا الخيار يجعل الورقة في وضع طولي (رأسي)."}]},{"question":"ما هو اختصار لوحة المفاتيح السريع لفتح نافذة 'الطباعة' (Print)؟","hint":"يرتبط الحرف الأول من الكلمة الإنجليزية للطباعة بهذا الاختصار.","options":[{"label":"A","text":"$Ctrl+S$","isCorrect":false,"rationale":"هذا الاختصار مخصص لحفظ المستند (Save)."},{"label":"B","text":"$Ctrl+P$","isCorrect":true,"rationale":"حرف P هو الحرف الأول من كلمة Print، وهو الاختصار العالمي للطباعة."},{"label":"C","text":"$Ctrl+N$","isCorrect":false,"rationale":"يستخدم هذا الاختصار لإنشاء مستند جديد (New)."},{"label":"D","text":"$Ctrl+O$","isCorrect":false,"rationale":"يستخدم هذا الاختصار لفتح ملف موجود مسبقاً (Open)."}]},{"question":"يمكن كتابة نصوص بلغات مختلفة داخل مستند Word واحد.","hint":"فكر في قدرتك على كتابة اللغة العربية والإنجليزية في نفس البحث.","options":[{"label":"A","text":"صواب","isCorrect":true,"rationale":"تعد ميزة تعدد اللغات من المزايا الأساسية للبرنامج المذكورة في الدليل."},{"label":"B","text":"خطأ","isCorrect":false,"rationale":"يدعم البرنامج الكتابة بلغات متنوعة وتغيير اتجاه النص وفقاً للغة."}]}];
+const tr = {"correct":"صحيح!","incorrect":"خطأ","next":"السؤال التالي ←","seeResults":"عرض النتائج","complete":"اكتمل الاختبار!","scoreText":"أجبت {correct} من {total} بشكل صحيح","tryAgain":"حاول مرة أخرى","rightAnswer":"إجابة صحيحة","notQuite":"ليس تماماً"};
+let currentQ = 0, correctCount = 0, answered = false;
+
+function init() {
+  document.querySelectorAll('.question').forEach((q, i) => q.classList.toggle('active', i === 0));
+  updateProgress();
+  document.querySelectorAll('.option').forEach(opt => opt.addEventListener('click', () => selectOption(opt)));
+  document.querySelectorAll('.next-btn').forEach(btn => btn.addEventListener('click', nextQuestion));
+}
+
+function selectOption(opt) {
+  if (answered) return;
+  answered = true;
+  const q = opt.closest('.question');
+  const options = q.querySelectorAll('.option');
+  const nextBtn = q.querySelector('.next-btn');
+  const isCorrect = opt.dataset.correct === 'true';
+  
+  // Mark all options as disabled
+  options.forEach(o => o.classList.add('disabled'));
+  
+  // Style selected option
+  opt.classList.add('selected', isCorrect ? 'correct' : 'incorrect');
+  
+  // Show correct answer if wrong
+  if (!isCorrect) {
+    const correctOpt = [...options].find(o => o.dataset.correct === 'true');
+    if (correctOpt) correctOpt.classList.add('show-correct');
+  }
+  
+  if (isCorrect) correctCount++;
+  
+  // Show feedback for ALL options that have rationale
+  options.forEach(o => {
+    const wrapper = o.closest('.option-wrapper');
+    const feedback = wrapper.querySelector('.option-feedback');
+    const rationale = o.dataset.rationale;
+    const isThisCorrect = o.dataset.correct === 'true';
+    
+    if (rationale && rationale.trim()) {
+      feedback.classList.remove('hidden');
+      feedback.classList.add(isThisCorrect ? 'correct-feedback' : 'incorrect-feedback');
+      
+      const statusEl = feedback.querySelector('.feedback-status');
+      statusEl.className = 'feedback-status ' + (isThisCorrect ? 'correct' : 'incorrect');
+      statusEl.innerHTML = isThisCorrect 
+        ? '✓ ' + tr.rightAnswer
+        : '✗ ' + tr.notQuite;
+    }
+  });
+  
+  nextBtn.classList.remove('hidden');
+  if (currentQ === quizData.length - 1) nextBtn.textContent = tr.seeResults;
+}
+
+function nextQuestion() {
+  answered = false;
+  currentQ++;
+  if (currentQ >= quizData.length) { showResults(); return; }
+  document.querySelectorAll('.question').forEach((q, i) => q.classList.toggle('active', i === currentQ));
+  updateProgress();
+}
+
+function updateProgress() {
+  document.querySelector('.progress-fill').style.width = (currentQ / quizData.length * 100) + '%';
+}
+
+function showResults() {
+  document.querySelectorAll('.question').forEach(q => q.classList.remove('active'));
+  document.getElementById('results').classList.add('active');
+  const pct = Math.round((correctCount / quizData.length) * 100);
+  document.getElementById('score').textContent = pct + '%';
+  document.getElementById('score-text').textContent = tr.scoreText.replace('{correct}', correctCount).replace('{total}', quizData.length);
+  document.querySelector('.progress-fill').style.width = '100%';
+}
+
+function restart() {
+  currentQ = 0; correctCount = 0; answered = false;
+  document.getElementById('results').classList.remove('active');
+  document.querySelectorAll('.question').forEach((q, i) => {
+    q.classList.toggle('active', i === 0);
+    q.querySelectorAll('.option').forEach(o => o.classList.remove('selected', 'correct', 'incorrect', 'disabled', 'show-correct'));
+    q.querySelectorAll('.option-feedback').forEach(f => {
+      f.classList.add('hidden');
+      f.classList.remove('correct-feedback', 'incorrect-feedback');
+    });
+    const btn = q.querySelector('.next-btn');
+    btn.classList.add('hidden');
+    btn.textContent = tr.next;
+  });
+  updateProgress();
+}
+
+init();
+</script>
+</body>
+</html>

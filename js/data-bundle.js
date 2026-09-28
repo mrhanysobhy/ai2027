@@ -3,7 +3,7 @@
    ⚠️ لا تعدّل هذا الملف يدوياً — عدّل data/*.json ثم شغّل:
        node tools/build.js
    ═══════════════════════════════════════════════════════════ */
-window.APP_BUILD = "20260922-070500";
+window.APP_BUILD = "20260928-175438";
 window.APP_DATA = {
   "config": {
     "sheetUrl": "https://script.google.com/macros/s/AKfycbznlQ5YkngMMy_-Oq2MLY1blBjfoCkzKQiGFR8PYQSwvecCQGJikCzTc1OdvMbAlhXtsQ/exec"

@@ -197,8 +197,7 @@ function finalView(sbj, entry, lesson, n) {
   const passScore = ex.passScore || 60;
   const saved = me ? getStoredResult(me.code, sbj.id, n, lesson) : null;
 
-  if (saved && saved.passed) return renderFinalPassed({ sbj, entry, lesson, n, att: saved.attempt || 1 }, saved);
-  if (saved && !saved.passed && w.status === 'closed') return renderFinalFailed({ sbj, entry, lesson, n, att: saved.attempt || 1 }, saved, false);
+  if (saved && saved.passed && w.status !== 'closed') return renderFinalPassed({ sbj, entry, lesson, n, att: saved.attempt || 1 }, saved);
 
   if (w.status === 'waiting') {
     return `
@@ -210,11 +209,7 @@ function finalView(sbj, entry, lesson, n) {
   }
 
   if (w.status === 'closed') {
-    return `
-      <div class="card" style="text-align:center">
-        <h3>🔒 الاختبار النهائي غير متاح</h3>
-        <p class="mu">انتهى موعد الاختبار (${fdt(ex.availableTo)}).</p>
-      </div>`;
+    return closedReviewView(sbj, n, w, saved);
   }
 
   // مفتوح
@@ -231,6 +226,116 @@ function finalView(sbj, entry, lesson, n) {
       <button class="btn ok" onclick="startFinal('${sbj.id}',${n})">
         ${saved ? '🔁 إعادة المحاولة' : '🚀 ابدأ الاختبار النهائي'}
       </button>
+    </div>`;
+}
+
+function closedReviewView(sbj, n, w, saved) {
+  const ex = w.exam;
+  const count = (ex.questions || []).length;
+  const savedCard = saved ? renderFinalResultCard(saved, false) : '';
+  const intro = count
+    ? `<div class="card" style="text-align:center">
+        <h3>📖 مراجعة أسئلة الاختبار النهائي</h3>
+        <p class="mu">${count} سؤال — سؤال واحد في كل صفحة كما في الاختبار التجريبي.
+        <br>اختر إجابتك لتظهر الإجابة الصحيحة فوراً — دون درجات وبدون تسجيل.</p>
+        <button class="btn p" onclick="startReviewSlides('${sbj.id}',${n})">🚀 ابدأ المراجعة</button>
+      </div>`
+    : '';
+  return `
+    <div class="card" style="text-align:center">
+      <h3>🔒 الاختبار النهائي غير متاح</h3>
+      <p class="mu">انتهى موعد الاختبار (${fdt(ex.availableTo)}).</p>
+      <p class="note">هذه الأسئلة متاحة للمراجعة فقط دون درجات.</p>
+    </div>
+    ${savedCard}
+    ${intro}`;
+}
+
+let Rev = null;
+
+function startReviewSlides(sbjId, n) {
+  const sbj = sub(sbjId);
+  const lesson = lessonContent(sbj, n);
+  if (!lesson || !lesson.finalExam) return;
+  const qs = (lesson.finalExam.questions || []).map((q) => ({
+    question: q.question,
+    options: (q.options || []),
+    correct: q.correct,
+    explanation: (typeof q.hint === 'string' && q.hint) ? q.hint : (q.explanation || '')
+  }));
+  Rev = { sbj, n, qs, ans: [], i: 0 };
+  const box = $('box');
+  if (box) box.innerHTML = renderRevQ();
+}
+
+function renderRevQ() {
+  if (!Rev || !Rev.qs.length) return '';
+  const len = Rev.qs.length;
+  const q = Rev.qs[Rev.i];
+  const answered = Rev.ans.filter((v) => v != null).length;
+  const a = Rev.ans[Rev.i];
+  const fb = a != null
+    ? `<div class="fb ${a === q.correct ? 'ok' : 'bad'}">${a === q.correct ? '✔ إجابة صحيحة' : '✖ إجابة خاطئة — الصحيحة: ' + q.options[q.correct]}</div>`
+    : '';
+  const note = (a != null && q.explanation) ? `<div class="bx-note">💡 ${q.explanation}</div>` : '';
+  return `
+    <div class="card q">
+      <div class="row">
+        <b>📖 مراجعة الاختبار النهائي</b>
+        <span class="ex-cnt">✔ ${answered} مجابة · ${len - answered} غير مجابة</span>
+      </div>
+      <div class="bar"><i style="width:${((Rev.i + 1) / len) * 100}%"></i></div>
+      <p class="mu">السؤال ${Rev.i + 1} من ${len}</p>
+      <h3>${q.question}</h3>
+      <div class="opts">
+        ${q.options.map((o, j) => {
+          const cls = a != null
+            ? (j === q.correct ? 'ok' : (j === a ? 'bad' : ''))
+            : '';
+          return `<button class="opt ${cls}" onclick="revPick(${j})" ${a != null ? 'disabled' : ''}>
+            <span class="ol">${optionLetter(j)})</span> ${o}
+          </button>`;
+        }).join('')}
+      </div>
+      ${fb}
+      ${note}
+      <div class="row">
+        <button class="btn" onclick="revGo(-1)" ${Rev.i > 0 ? '' : 'disabled'}>السابق</button>
+        ${Rev.i < len - 1
+          ? '<button class="btn p" onclick="revGo(1)">التالي</button>'
+          : '<button class="btn ok" onclick="revDone()">إنهاء المراجعة</button>'}
+      </div>
+    </div>`;
+}
+
+function revPick(j) {
+  if (!Rev || Rev.ans[Rev.i] != null) return;
+  Rev.ans[Rev.i] = j;
+  const box = $('box');
+  if (box) box.innerHTML = renderRevQ();
+}
+
+function revGo(d) {
+  if (!Rev) return;
+  Rev.i += d;
+  const box = $('box');
+  if (box) box.innerHTML = renderRevQ();
+}
+
+function revDone() {
+  const box = $('box');
+  if (!box || !Rev) return;
+  const total = Rev.qs.length;
+  const done = Rev.ans.filter((v) => v != null).length;
+  const sid = Rev.sbj.id, n = Rev.n;
+  box.innerHTML = `
+    <div class="card" style="text-align:center">
+      <h2>📖 تمت مراجعة أسئلة الاختبار</h2>
+      <p class="mu">راجعت <b>${total}</b> سؤالاً وأجبت على <b>${done}</b> منها — دون درجات وبدون تسجيل نتائج.</p>
+      <div class="row" style="justify-content:center">
+        <button class="btn p" onclick="startReviewSlides('${sid}',${n})">🔁 إعادة المراجعة</button>
+        <a class="btn" href="#lesson/${sid}/${n}/review">📖 مراجعة الدرس</a>
+      </div>
     </div>`;
 }
 

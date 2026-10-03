@@ -50,16 +50,48 @@ const TOAST_ICON = { ok: '✔', err: '✖', warn: '⚠' };
 // استرجاع المادة والخلفية
 function sub(id) { return (D.subjects || []).find((s) => s.id === id); }
 
-// الدرس المؤشر ضمن المادة (رقم الدرس = ترتيبه في القائمة)
-function lessonEntry(subject, n) {
-  if (!subject || !subject.lessons || !n) return null;
-  return subject.lessons[n - 1] || null;
+// parts المادة: إمّا parts معلنة في data/subjects.json، أو جزء نظري واحد افتراضي.
+// مادة بلا parts ترجع [{id:'theory', lessons: subject.lessons}] ⇒ سلوكها كما كان تماماً.
+function subjectParts(subject) {
+  if (!subject) return [];
+  if (Array.isArray(subject.parts) && subject.parts.length) return subject.parts;
+  return [{ id: 'theory', name: 'الجزء النظري', icon: '📖', lessons: subject.lessons || [] }];
+}
+
+// الجزء المطلوب داخل مادة (يرجع الأول افتراضياً)
+function subjectPart(subject, partId) {
+  if (!subject) return null;
+  const ps = subjectParts(subject);
+  return ps.find((p) => String(p.id) === String(partId)) || ps[0] || null;
+}
+
+// كل دروس المادة بلا ترتيب (تحافظ على أرقام lessonId ⇒ لا تتغير مفاتيح النتائج)
+function allLessonEntries(subject) {
+  if (!subject) return [];
+  const out = [];
+  subjectParts(subject).forEach((p) => (p.lessons || []).forEach((l) => out.push(l)));
+  return out.length ? out : (subject.lessons || []);
+}
+
+// الدرس المؤشر: إن حُدِّد partId نفّذ داخله، وإلا ابحث في كل الأجزاء ثم lessons
+function lessonEntry(subject, n, partId) {
+  if (!subject || !n) return null;
+  if (partId) {
+    const p = subjectParts(subject).find((x) => String(x.id) === String(partId));
+    return p ? ((p.lessons || [])[n - 1] || null) : null;
+  }
+  return allLessonEntries(subject)[n - 1] || null;
 }
 
 // محتوى الدرس (التفاصيل المادية من data/lessons) أو null
-function lessonContent(subject, n) {
-  const e = lessonEntry(subject, n);
+function lessonContent(subject, n, partId) {
+  const e = lessonEntry(subject, n, partId);
   return e ? (e.content || null) : null;
+}
+
+// قيمة JS آمنة بعلامات مفردة تُدرَج داخل onclick="..." (علامات مزدوجة تكسر السمة)
+function jsq(v) {
+  return "'" + String(v == null ? '' : v).replace(/['"\\<>]/g, '') + "'";
 }
 
 // تنسيق التاريخ بالعربية
@@ -178,7 +210,7 @@ function effectiveFinal(sbj, n, lesson) {
 // إعادة رسم صفحة الاختبار النهائي المفتوحة بعد وصول المواعيد (لتعكس التحديث فوراً)
 function applyScheduleUi() {
   const h = location.hash || '';
-  if (/^#lesson\/[^/]+\/\d+\/final$/.test(h) && typeof nav === 'function') nav();
+  if (/^#lesson\/[^/]+\/\d+\/final(\/[^/]*)?$/.test(h) && typeof nav === 'function') nav();
 }
 
 /* ────────────────────────── تنظيف البيانات القديمة ────────────────────────── */

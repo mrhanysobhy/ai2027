@@ -39,7 +39,7 @@ function renderHeader() {
     <a href="#home">الرئيسية</a>
     ${me
       ? `<a href="#results">نتائجي</a><span class="who">👤 ${me.name}</span><button class="btn" onclick="logout()">خروج</button>`
-      : `<button class="btn p" onclick="openLogin()">تسجيل الدخول</button>`}
+      : `<span class="who guest">👤 زائر — تصفّح بلا كود</span><button class="btn p" onclick="openLogin()">تسجيل الدخول</button>`}
     ${isAdmin ? `<a class="admlink" href="#admin">👨‍💼 لوحة الإدارة</a>` : ''}
   `;
 }
@@ -64,15 +64,17 @@ function nav() {
   }
   document.body.classList.remove('bd-admin');
 
-  if (!me && root !== '' && root !== 'home') {
-    location.hash = '#home';
-    openLogin();
+  // النتائج والشهادة بيانات شخصية → تحتاج تسجيل. أما الشرح والمراجعة والاختبار التجريبي
+  // والجزء العملي فهي مفتوحة للزائر بلا تحقق.
+  const needsAuth = (root === 'results') || (root === 'cert');
+  if (!me && needsAuth) {
+    requireLogin(null, 'هذه الصفحة تعرض بياناتك أنت — أدخل كود الدخول للمتابعة.');
     return;
   }
 
   window.scrollTo(0, 0);
-  if (root === 'subject' && p[1]) return main(subjectView(p[1]));
-  if (root === 'lesson' && p[1] && p[2]) return main(lessonView(p[1], +p[2], p[3] || 'explain'));
+  if (root === 'subject' && p[1]) return main(subjectView(p[1], p[2] || ''));
+  if (root === 'lesson' && p[1] && p[2]) return main(lessonView(p[1], +p[2], p[3] || 'explain', p[4] || ''));
   if (root === 'results') return main(resultsView());
   if (root === 'cert' && p[1] && p[2]) return main(studentCertView(p[1], +p[2]));
   main(homeView());
@@ -86,14 +88,23 @@ function main(html) {
 /* ───────────────────────────── الصفحة الرئيسية ───────────────────────────── */
 
 function homeView() {
-  const cards = (D.subjects || []).map((s) => `
-    <div class="sc" style="background:${s.gradient}" onclick="${me ? `location.hash='#subject/${s.id}'` : 'openLogin()'}">
+  const cards = (D.subjects || []).map((s) => {
+    const parts = subjectParts(s);
+    const theory = parts.reduce((t, p) => t + ((p.lessons || []).length), 0);
+    const tools = parts.filter((p) => p.type === 'tool').length;
+    const counts = [
+      `📚 ${theory} درس`,
+      tools ? `⌨️ ${tools} تمرين عملي` : '',
+      `📝 ${theory} اختبار نهائي`
+    ].filter(Boolean).join(' · ');
+    return `
+    <div class="sc" style="background:${s.gradient}" onclick="location.hash='#subject/${s.id}'">
       <div class="ic">${s.emoji}</div>
       <h3>${s.name}</h3>
       <p>${s.description}</p>
-      <p style="margin-top:8px">📚 ${s.lessons.length} دروس · 📝 ${s.lessons.length} اختبارات</p>
-      ${me ? '' : '<div class="lock"><span style="font-size:2rem">🔒</span>سجل دخولك أولاً</div>'}
-    </div>`).join('');
+      <p style="margin-top:8px">${counts}</p>
+    </div>`;
+  }).join('');
 
   return `
     <div class="banner">
@@ -105,14 +116,32 @@ function homeView() {
 
 /* ───────────────────────────── صفحة المادة ───────────────────────────── */
 
-function subjectView(id) {
+function subjectView(id, partId) {
   const s = sub(id);
   if (!s) return homeView();
-  const lessons = s.lessons.map((lesson, i) => `
-    <div class="card">
-      <h3>الدرس ${i + 1}: ${lesson.title}</h3>
-      <div class="tabs lt">${lessonTabs(s.id, i + 1, 'explain')}</div>
-    </div>`).join('');
+  const parts = subjectParts(s);
+  const active = subjectPart(s, partId) || parts[0];
+  const hasTabs = parts.length > 1;
+
+  // شريط الأجزاء (نظري / عملي) — يظهر فقط إن كانت المادة مقسّمة
+  const partBar = hasTabs ? `
+    <div class="tabs parts">${parts.map((p) => `
+      <a class="tb part ${p.id === active.id ? 'on' : ''}" href="#subject/${s.id}/${p.id}">
+        ${p.icon || '📚'} ${p.name || p.id}
+        ${(p.lessons || []).length ? ` <small>(${(p.lessons || []).length})</small>` : ''}
+      </a>`).join('')}</div>` : '';
+
+  // جزء عملي: يفتح الأداة كصفحة مستقلة — بلا دروس وبلا اختبارات
+  let body;
+  if (active.type === 'tool') {
+    body = toolPartView(s, active);
+  } else {
+    body = (active.lessons || []).map((lesson, i) => `
+      <div class="card">
+        <h3>الدرس ${i + 1}: ${lesson.title}</h3>
+        <div class="tabs lt">${lessonTabs(s.id, i + 1, 'explain', active.id)}</div>
+      </div>`).join('') || '<div class="card" style="text-align:center">لا توجد دروس في هذا الجزء بعد.</div>';
+  }
 
   return `
     <div class="banner" style="background:${s.gradient}">
@@ -120,27 +149,50 @@ function subjectView(id) {
       <h1>${s.name}</h1>
       <p>${s.description}<br>${SCH.className || ''} · ${SCH.academicYear || ''}</p>
     </div>
-    ${lessons}`;
+    ${partBar}
+    ${active.name ? `<h2 class="part-title">${active.icon || ''} ${active.name}${hasTabs ? '' : ''}</h2>` : ''}
+    ${active.description ? `<p class="mu part-desc">${active.description}</p>` : ''}
+    ${body}`;
 }
 
-function lessonTabs(sid, n, active) {
+// الجزء العملي: زر يفتح الأداة في صفحة مستقلة (العنوان والوصف يُعرضان في subjectView)
+function toolPartView(subject, part) {
+  const t = part.tool || {};
+  const page = t.page || 'codeeditor.html';
+  const title = t.title || 'ساحة الأكواد';
+  return `
+    <p style="margin-top:16px">
+      <a class="btn ok" href="${page}" target="_blank" rel="noopener">🚀 ادخل ${title}</a>
+      <span class="mu" style="font-size:.85rem;margin-inline-start:8px">يفتح في تبويب جديد</span>
+    </p>`;
+}
+
+function lessonTabs(sid, n, active, partId) {
   const items = [
     ['explain', 'الشرح'],
     ['review', 'المراجعة'],
     ['practice', 'اختبار تجريبي'],
     ['final', 'اختبار نهائي']
   ];
+  const p = partId ? '/' + partId : '';
   return items.map(([k, label]) => `
-    <a class="tb ${k} ${k === active ? 'on' : ''}" href="#lesson/${sid}/${n}/${k}">${label}</a>`).join('');
+    <a class="tb ${k} ${k === active ? 'on' : ''}" href="#lesson/${sid}/${n}/${k}${p}">${label}</a>`).join('');
 }
 
 /* ───────────────────────────── صفحة الدرس ───────────────────────────── */
 
-function lessonView(id, n, tab) {
+function lessonView(id, n, tab, partId) {
   const s = sub(id);
-  const entry = lessonEntry(s, n);
-  if (!s || !entry) return homeView();
-  const lesson = lessonContent(s, n);
+  if (!s) return homeView();
+  const part = subjectPart(s, partId || '');
+  const pid = part ? part.id : '';
+
+  // جزء عملي (ساحة الأكواد): لا دروس ولا اختبارات — نعرض بطاقته
+  if (part && part.type === 'tool') return subjectView(s.id, pid);
+
+  const entry = lessonEntry(s, n, pid);
+  if (!entry) return subjectView(s.id, pid);
+  const lesson = lessonContent(s, n, pid);
 
   const valid = ['explain', 'review', 'practice', 'final'];
   if (valid.indexOf(tab) < 0) tab = 'explain';
@@ -148,14 +200,14 @@ function lessonView(id, n, tab) {
   let box = '';
   if (tab === 'explain') box = explainView(lesson, entry);
   else if (tab === 'review') box = lesson ? reviewView(lesson) : '<div class="card" style="text-align:center">لا توجد مراجعة بعد.</div>';
-  else if (tab === 'practice') box = practiceIntro(s, entry, lesson, n);
-  else if (tab === 'final') box = finalView(s, entry, lesson, n);
+  else if (tab === 'practice') box = practiceIntro(s, entry, lesson, n, pid);
+  else if (tab === 'final') box = finalView(s, entry, lesson, n, pid);
 
   return `
-    <p><a href="#subject/${s.id}">← ${s.name}</a></p>
+    <p><a href="#subject/${s.id}${pid ? '/' + pid : ''}">← ${part && part.name && subjectParts(s).length > 1 ? part.name : s.name}</a></p>
     <h2 style="margin:0">${entry.title}</h2>
-    <small class="mu">${s.name} | ${SCH.platformName || ''}</small>
-    <div class="tabs lt">${lessonTabs(s.id, n, tab)}</div>
+    <small class="mu">${s.name}${part && part.name && subjectParts(s).length > 1 ? ' · ' + part.name : ''} | ${SCH.platformName || ''}</small>
+    <div class="tabs lt">${lessonTabs(s.id, n, tab, pid)}</div>
     ${lesson && lesson.placeholder ? '<p class="note">📝 هذا الدرس قيد الإعداد ويُعرض بمحتوى تجريبي.</p>' : ''}
     <div id="box">${box}</div>`;
 }

@@ -47,23 +47,23 @@ function toggleHint(btn) {
 
 /* ────────────────────────── الاختبار التجريبي ────────────────────────── */
 
-function practiceIntro(sbj, entry, lesson, n) {
+function practiceIntro(sbj, entry, lesson, n, partId) {
   const qs = (lesson && lesson.practiceExam && lesson.practiceExam.questions) || [];
   return `
     <div class="card" style="text-align:center">
       <h3>✏️ اختبار تجريبي</h3>
       <p class="mu">${qs.length} أسئلة اختيار من متعدد — تُخلط عشوائياً في كل محاولة.
       <br>يمكنك إعادة الاختبار عدداً غير محدود من المرات ولا تُحفظ النتائج.</p>
-      <button class="btn p" onclick="startPractice('${sbj.id}',${n})">🚀 ابدأ الاختبار</button>
+      <button class="btn p" onclick="startPractice('${sbj.id}',${n},${jsq(partId)})">🚀 ابدأ الاختبار</button>
     </div>`;
 }
 
-function startPractice(sbjId, n) {
+function startPractice(sbjId, n, partId) {
   const sbj = sub(sbjId);
-  const lesson = lessonContent(sbj, n);
+  const lesson = lessonContent(sbj, n, partId);
   if (!lesson || !lesson.practiceExam) return;
   Ex = {
-    mode: 'practice', sbj, entry: lessonEntry(sbj, n), lesson, n,
+    mode: 'practice', sbj, entry: lessonEntry(sbj, n, partId), lesson, n, partId,
     qs: shuffle(lesson.practiceExam.questions), ans: [], i: 0
   };
   renderExQ();
@@ -186,7 +186,8 @@ function renderPracticeResult(x, score, pct) {
 
 /* ────────────────────────── الاختبار النهائي ────────────────────────── */
 
-function finalView(sbj, entry, lesson, n) {
+function finalView(sbj, entry, lesson, n, partId) {
+  const pp = partId || '';
   if (!lesson || !lesson.finalExam) {
     return '<div class="card" style="text-align:center">🏁 الاختبار النهائي غير متاح حالياً.</div>';
   }
@@ -209,7 +210,7 @@ function finalView(sbj, entry, lesson, n) {
   }
 
   if (w.status === 'closed') {
-    return closedReviewView(sbj, n, w, saved);
+    return closedReviewView(sbj, n, w, saved, pp);
   }
 
   // مفتوح
@@ -223,13 +224,14 @@ function finalView(sbj, entry, lesson, n) {
       </div>
       <p class="mu">${count} سؤال · المدة ${dur} دقيقة · النجاح ≥ ${passScore}%</p>
       <p class="note">أداء موثّق لكل فترة اختبار — تُسجَّل كل المحاولات في سجلك.</p>
-      <button class="btn ok" onclick="startFinal('${sbj.id}',${n})">
-        ${saved ? '🔁 إعادة المحاولة' : '🚀 ابدأ الاختبار النهائي'}
+      ${me ? '' : '<p class="note">🔑 يتطلب أداء هذا الاختبار كود الدخول — يمكنك تصفّح الشرح والمراجعة والاختبار التجريبي بلا كود.</p>'}
+      <button class="${me ? 'btn ok' : 'btn p'}" onclick="startFinal('${sbj.id}',${n},${jsq(pp)})">
+        ${me ? (saved ? '🔁 إعادة المحاولة' : '🚀 ابدأ الاختبار النهائي') : '🔑 تسجيل الدخول لأداء الاختبار'}
       </button>
     </div>`;
 }
 
-function closedReviewView(sbj, n, w, saved) {
+function closedReviewView(sbj, n, w, saved, partId) {
   const ex = w.exam;
   const count = (ex.questions || []).length;
   const savedCard = saved ? renderFinalResultCard(saved, false) : '';
@@ -238,7 +240,7 @@ function closedReviewView(sbj, n, w, saved) {
         <h3>📖 مراجعة أسئلة الاختبار النهائي</h3>
         <p class="mu">${count} سؤال — سؤال واحد في كل صفحة كما في الاختبار التجريبي.
         <br>اختر إجابتك لتظهر الإجابة الصحيحة فوراً — دون درجات وبدون تسجيل.</p>
-        <button class="btn p" onclick="startReviewSlides('${sbj.id}',${n})">🚀 ابدأ المراجعة</button>
+        <button class="btn p" onclick="startReviewSlides('${sbj.id}',${n},${jsq(partId)})">🚀 ابدأ المراجعة</button>
       </div>`
     : '';
   return `
@@ -253,9 +255,9 @@ function closedReviewView(sbj, n, w, saved) {
 
 let Rev = null;
 
-function startReviewSlides(sbjId, n) {
+function startReviewSlides(sbjId, n, partId) {
   const sbj = sub(sbjId);
-  const lesson = lessonContent(sbj, n);
+  const lesson = lessonContent(sbj, n, partId);
   if (!lesson || !lesson.finalExam) return;
   const qs = (lesson.finalExam.questions || []).map((q) => ({
     question: q.question,
@@ -263,7 +265,7 @@ function startReviewSlides(sbjId, n) {
     correct: q.correct,
     explanation: (typeof q.hint === 'string' && q.hint) ? q.hint : (q.explanation || '')
   }));
-  Rev = { sbj, n, qs, ans: [], i: 0 };
+  Rev = { sbj, n, partId, qs, ans: [], i: 0 };
   const box = $('box');
   if (box) box.innerHTML = renderRevQ();
 }
@@ -339,22 +341,28 @@ function revDone() {
     </div>`;
 }
 
-function startFinal(sbjId, n) {
+function startFinal(sbjId, n, partId) {
   const sbj = sub(sbjId);
-  const lesson = lessonContent(sbj, n);
-  if (!lesson || !lesson.finalExam || !me) return;
+  const lesson = lessonContent(sbj, n, partId);
+  if (!lesson || !lesson.finalExam) return;
+  // أداء الاختبار النهائي يتطلب كود الطالب — الزائر يُطلب منه الكود ثم يبدأ تلقائياً
+  if (!me) {
+    requireLogin(() => startFinal(sbjId, n, partId),
+      'أداء الاختبار النهائي وتسجيل نتيجتك يتطلب كود الدخول (6 أرقام).');
+    return;
+  }
   const w = finalWindow(sbj, n, lesson);
   if (w.status !== 'open') { toast('الاختبار غير متاح في هذا الوقت', 'warn'); return; }
 
   const prev = getStoredResult(me.code, sbjId, n, lesson);
-  if (prev && prev.passed) { toast('لقد اجتزت هذا الاختبار بالفعل', 'warn'); finalView(sbj, lessonEntry(sbj, n), lesson, n); return; }
+  if (prev && prev.passed) { toast('لقد اجتزت هذا الاختبار بالفعل', 'warn'); finalView(sbj, lessonEntry(sbj, n, partId), lesson, n, partId); return; }
 
   const att = getStoredAttempt(me.code, sbjId, n, lesson) + 1;
   const eff = effectiveFinal(sbj, n, lesson);
   const dur = (eff.duration || 30);
 
   Ex = {
-    mode: 'final', sbj, entry: lessonEntry(sbj, n), lesson, n, att,
+    mode: 'final', sbj, entry: lessonEntry(sbj, n, partId), lesson, n, partId, att,
     qs: lesson.finalExam.questions, ans: [], i: 0,
     end: Date.now() + dur * 60000
   };
@@ -401,7 +409,7 @@ function renderFinalFailed(x, r, allowRetry) {
   const retry = allowRetry && me ? (finalWindow(x.sbj.id, x.n, x.lesson).status === 'open') : false;
   return renderFinalResultCard(r, true) + `
     <div style="text-align:center" class="noprint">
-      ${retry ? `<button class="btn p" onclick="startFinal('${x.sbj.id}',${x.n})">🔁 إعادة المحاولة</button>` : ''}
+      ${retry ? `<button class="btn p" onclick="startFinal('${x.sbj.id}',${x.n || 0},${jsq(x.partId)})">🔁 إعادة المحاولة</button>` : ''}
       <a class="btn" href="#lesson/${x.sbj.id}/${x.n}/review">📖 راجع الدرس</a>
     </div>`;
 }

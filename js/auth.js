@@ -9,18 +9,41 @@ function studentByCode(code) {
   return (D.students || []).find((s) => String(s.code) === String(code).trim()) || null;
 }
 
-// فتح نافذة الدخول
-function openLogin() {
+// نية معلّقة تُنفَّذ بعد نجاح الدخول (مثلاً: بدء الاختبار النهائي بعد إدخال الكود)
+let _afterLogin = null;
+
+// فتح نافذة الدخول — أي فتح يدوي يُلغي النية المعلّقة حتى لا تُنفَّذ لاحقاً بالخطأ
+function openLogin(message) {
   const m = $('mod');
   if (!m) return;
+  _afterLogin = null;
   m.style.display = 'flex';
+  const hint = $('loginMsg');
+  if (hint) hint.textContent = message || 'الكود يُوزَّع من إدارة المدرسة أو من المعلم.';
   const inp = $('code');
   if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 120); }
 }
 
-function closeLogin() {
+// إغلاق النافذة: نلتقط النية قبل المسح حتى لا يضيع نجاح الدخول
+function closeLogin(keepPending) {
+  const pending = _afterLogin;
+  if (!keepPending) _afterLogin = null;
   const m = $('mod');
   if (m) m.style.display = 'none';
+  return pending;
+}
+
+// طلب تسجيل الدخول مع تنفيذ action بعد النجاح (زائر يتابع التصفّح بعد كوده)
+function requireLogin(action, message) {
+  if (me) { if (typeof action === 'function') action(); return true; }
+  openLogin(message);                       // openLogin يمسح أي نية سابقة
+  _afterLogin = typeof action === 'function' ? action : null;
+  return false;
+}
+
+function closeLoginAndClear() {
+  closeLogin(false);
+  if (typeof nav === 'function' && !me) nav();
 }
 
 // محاولة الدخول
@@ -37,7 +60,9 @@ function doLogin() {
   me = { code: String(s.code), name: s.name };
   ls.s('loggedInStudent', btoa(unescape(encodeURIComponent(JSON.stringify(me)))));
   applyAdminSync();
-  closeLogin();
+  const next = closeLogin(true);            // نحتفظ بالنية لأنها نجحت الآن
+  _afterLogin = null;
+  if (next) { nav(); next(); return; }
   toast('أهلاً بك ' + me.name + ' 🎉', 'ok');
   nav();
 }

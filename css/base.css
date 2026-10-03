@@ -6,6 +6,8 @@
   --bg:#f4f7fb; --card:#fff; --tx:#1b2a3a; --mu:#5d6d7e;
   --pr:#1565c0; --pr2:#26a69a; --ok:#2e7d32; --bad:#c62828;
   --bd:#dde5ee; --okb:#e8f5e9; --badb:#ffebee;
+  --bd2:#74869a;                                    /* حدّ واضح ≥3:1 (حدود غير نصية) */
+  --on-pr:#fff;                                      /* نصّ على تدرّج --pr (فاتح=أبيض) */
   color-scheme:light;
   --font:Cairo,Tahoma,sans-serif;
 }
@@ -14,6 +16,8 @@
     --bg:#0f1720; --card:#182330; --tx:#e8eef5; --mu:#9fb0c3;
     --pr:#64b5f6; --pr2:#4db6ac; --ok:#66bb6a; --bad:#ef5350;
     --bd:#2a3a4c; --okb:#1b3a24; --badb:#4a1f22;
+    --bd2:#5f7285;
+    --on-pr:#0a1c2b;                                /* تدرّج فاتح ⇒ نصّ داكن */
     color-scheme:dark;
   }
 }
@@ -21,12 +25,16 @@
   --bg:#0f1720; --card:#182330; --tx:#e8eef5; --mu:#9fb0c3;
   --pr:#64b5f6; --pr2:#4db6ac; --ok:#66bb6a; --bad:#ef5350;
   --bd:#2a3a4c; --okb:#1b3a24; --badb:#4a1f22;
+  --bd2:#5f7285;
+  --on-pr:#0a1c2b;
   color-scheme:dark;
 }
 :root[data-theme="light"]{
   --bg:#f4f7fb; --card:#fff; --tx:#1b2a3a; --mu:#5d6d7e;
   --pr:#1565c0; --pr2:#26a69a; --ok:#2e7d32; --bad:#c62828;
   --bd:#dde5ee; --okb:#e8f5e9; --badb:#ffebee;
+  --bd2:#74869a;
+  --on-pr:#fff;
   color-scheme:light;
 }
 
@@ -68,13 +76,20 @@ header small{color:var(--mu)}
   color:#fff!important;border-radius:20px;padding:4px 14px;font-size:.9rem;
 }
 
-/* ───────────── التذييل ───────────── */
+/* ───────────── التذييل (موحّد مع فوتر codeeditor.html) ───────────── */
 footer{
   position:fixed;bottom:0;left:0;right:0;z-index:7;
-  background:var(--card);border-top:1px solid var(--bd);
-  text-align:center;font-size:.8rem;line-height:1.6;color:var(--mu);
-  padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px));
+  display:flex;flex-wrap:wrap;gap:2px 0;justify-content:center;align-items:center;
+  background:var(--card);border-top:1px solid var(--bd2);
+  font-size:12.5px;line-height:1.7;color:var(--tx);direction:ltr;
+  padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px));
 }
+footer b{color:var(--tx);font-weight:700;position:relative}
+footer b::after{
+  content:"";position:absolute;inset:auto 0 -2px;height:1.5px;border-radius:2px;
+  background:var(--pr);opacity:.75;
+}
+footer i{font-style:normal;color:var(--mu);margin:0 8px}
 
 /* ───────────── شريط التمرير ───────────── */
 ::-webkit-scrollbar{width:10px;height:10px}
@@ -91,6 +106,9 @@ footer{
   body{padding-bottom:72px}
   main{padding:10px}
   header b{font-size:1rem}
+  /* الفوتر: نُخفي الفواصل على الشاشات الضيقة فلا تأخذ سطراً مستقلاً */
+  footer{font-size:11px;line-height:1.6;padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px))}
+  footer i{display:none}
 }
 
 @media print{

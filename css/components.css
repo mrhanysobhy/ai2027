@@ -56,18 +56,39 @@ main{max-width:980px;margin:0 auto;padding:16px}
   display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;
 }
 
+/* ───────────── تقسيم المادة إلى أجزاء (نظري / عملي) ───────────── */
+.tabs.parts{
+  margin:14px 0 4px;gap:8px;
+  background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:6px;
+}
+.tb.part{
+  flex:1;justify-content:center;font-weight:700;
+  background:var(--card);border:1px solid var(--bd2);border-radius:10px;padding:10px 8px;
+  color:var(--tx);
+}
+.tb.part small{font-weight:600;color:var(--mu);margin-inline-start:2px}
+.tb.part:hover{background:var(--bg);border-color:var(--pr)}
+.tb.part.on{
+  background:linear-gradient(135deg,var(--pr),var(--pr2));
+  color:var(--on-pr);border-color:transparent;
+}
+.tb.part.on small{color:var(--on-pr);opacity:.9}
+h2.part-title{margin:16px 0 2px;font-size:1.15rem}
+p.part-desc{margin:0 0 12px}
+.who.guest{border-style:dashed}
+
 /* صفوف */
 .row{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin:8px 0}
 
-/* تبويبات الدروس */
+/* تبويبات الدروس — مقصورة على .lt حتى لا تصيب تبويبات الأجزاء */
 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
 .tabs a{padding:8px 14px;border-radius:10px;background:var(--card);border:1px solid var(--bd);color:var(--tx)}
 .tabs a.on{background:var(--pr);color:#fff;border-color:var(--pr)}
-.tabs a.tb{background:var(--c);border-color:var(--c);color:#fff;font-weight:600}
-.tabs a.explain{--c:#1565c0}.tabs a.review{--c:#e65100}
+.tabs.lt a.tb{background:var(--c);border-color:var(--c);color:#fff;font-weight:600}
+.tabs a.explain{--c:#1565c0}.tabs a.review{--c:#c63f0d}
 .tabs a.practice{--c:#7b1fa2}.tabs a.final{--c:#2e7d32}
+.tabs.lt a.tb.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--c)}
 .tabs.lt a.tb:not(.on){opacity:.72}
-.tabs a.tb.on{box-shadow:0 0 0 3px var(--card),0 0 0 5px var(--c)}
 .tabs a.tb:hover{opacity:1}
 .tabs a:hover:not(.tb){transform:translateY(-3px);box-shadow:0 6px 14px rgba(0,0,0,.18)}
 .tabs a:active{transform:scale(.97)}

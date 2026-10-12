@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>المخاطر الأمنية السيبرانية</title>
+<style>
+:root{--bg:#f1f6fb;--card:#fff;--tx:#1d2b3a;--mut:#5b6b7b;--pri:#1f6feb;--pri2:#0b3d91;--ok:#16a34a;--bad:#dc2626;--warn:#fff7e0;--wb:#f5b800;--info:#e6f0ff;--bd:#d6e0ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1722;--card:#18232f;--tx:#e8eef5;--mut:#9fb0c1;--pri:#5b9bff;--pri2:#9cc2ff;--warn:#3a3210;--info:#12263f;--bd:#2b3b4c}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif;line-height:1.9}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:linear-gradient(135deg,#0b3d91,#1f6feb);padding:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;box-shadow:0 3px 10px #0003}
+nav button{flex:1;max-width:200px;border:0;border-radius:12px;padding:10px 8px;font:inherit;font-weight:bold;cursor:pointer;background:#ffffff26;color:#fff;transition:.2s}
+nav button.on,nav button:hover{background:#fff;color:#0b3d91;transform:translateY(-2px)}
+header.hero{text-align:center;padding:26px 14px 8px}
+header.hero h1{margin:0;font-size:clamp(1.4rem,4vw,2.2rem);color:var(--pri2)}
+header.hero p{margin:4px 0;color:var(--mut)}
+main{max-width:960px;margin:auto;padding:12px}
+section{display:none;animation:fade .45s}
+section.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin:14px 0;box-shadow:0 2px 8px #0000000d}
+h2{color:var(--pri2);border-right:6px solid var(--pri);padding-right:10px;margin:26px 0 8px}
+h3{color:var(--pri);margin:10px 0 4px}
+.note{background:var(--warn);border-right:5px solid var(--wb);border-radius:10px;padding:10px 14px;margin:10px 0}
+.info{background:var(--info);border-right:5px solid var(--pri);border-radius:10px;padding:10px 14px;margin:10px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.grid .card{margin:0}
+.ic{font-size:1.6rem}
+table{width:100%;border-collapse:collapse;display:block;overflow-x:auto}
+th,td{border:1px solid var(--bd);padding:8px;text-align:right}
+th{background:var(--pri);color:#fff}
+ul{padding-right:20px;margin:4px 0}
+.btn{border:0;border-radius:10px;padding:9px 16px;font:inherit;font-weight:bold;cursor:pointer;background:var(--pri);color:#fff;transition:.2s}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn.alt{background:var(--card);color:var(--pri);border:2px solid var(--pri)}
+.q{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+.opts{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.opt{border:2px solid var(--bd);background:transparent;color:var(--tx);border-radius:10px;padding:8px 14px;font:inherit;cursor:pointer;transition:.2s}
+.opt:hover{border-color:var(--pri)}
+.opt.sel{border-color:var(--pri);background:var(--info)}
+.opt.right{border-color:var(--ok);background:#16a34a22}
+.opt.wrong{border-color:var(--bad);background:#dc262622}
+.ans{display:none;margin-top:8px;padding:10px 12px;border-radius:10px;background:#16a34a1f;border-right:5px solid var(--ok)}
+.ans.show{display:block;animation:fade .3s}
+.show-btn{display:none;margin-top:6px}
+input[type=text],textarea{width:100%;font:inherit;padding:9px;border:2px solid var(--bd);border-radius:10px;background:var(--card);color:var(--tx)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;position:sticky;top:calc(env(safe-area-inset-top,0px) + 58px);background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:8px 14px;z-index:5}
+.timer{font-size:1.3rem;font-weight:bold;color:var(--pri)}
+.center{text-align:center}
+.score{font-size:3rem;font-weight:bold;color:var(--pri)}
+.err{color:var(--bad);min-height:1.6em}
+</style>
+</head>
+<body>
+<nav>
+  <button data-s="learn" class="on">📘 الشرح</button>
+  <button data-s="review">📝 المراجعة</button>
+  <button data-s="exam">🎓 الاختبار</button>
+</nav>
+<header class="hero">
+  <h1>🛡️ المخاطر الأمنية السيبرانية</h1>
+  <p>مقدمة في الأمن السيبراني — الصف الأول الثانوي التجاري</p>
+</header>
+<main>
+
+<!-- ============ القسم الأول: الشرح ============ -->
+<section id="learn" class="on">
+
+<h2>1) تمهيد ومفهوم المخاطر السيبرانية</h2>
+<div class="card">
+  <p>أصبحت الشبكات والأنظمة الرقمية جزءاً أساسياً من حياتنا، لذلك أصبحت هدفاً للمهاجمين الذين يسعون لسرقة البيانات أو تعطيل الخدمات.</p>
+  <div class="info">🔎 <b>المخاطر السيبرانية:</b> هي احتمال تعرّض الأفراد أو المؤسسات أو الحكومات لخسارة مالية أو تشغيلية أو سمعة نتيجة هجوم أو ثغرة في أنظمة المعلومات والاتصالات.</div>
+  <div class="note">📝 تشمل المخاطر: التقنية والتشغيلية والتنظيمية، وقد تنتج عن أخطاء بشرية أو أعطال أو هجمات متعمدة.</div>
+</div>
+
+<h2>2) مصادر المخاطر السيبرانية</h2>
+<div class="grid">
+  <div class="card"><div class="ic">🏢</div><h3>أولاً: مصادر داخلية</h3>
+    <p>تنشأ من داخل المنشأة:</p>
+    <ul>
+      <li><b>أخطاء بشرية:</b> فتح مرفق مشبوه، حذف ملفات بالخطأ، مشاركة كلمة المرور.</li>
+      <li><b>خلل في المعدات:</b> أعطال الأجهزة والخوادم وانقطاع الكهرباء.</li>
+      <li><b>أخطاء في البرمجيات:</b> أخطاء برمجية تسبب أعطالاً أو تتيح اختراق النظام.</li>
+      <li><b>أخطاء في البيانات:</b> إدخال بيانات غير صحيحة أو فقدانها.</li>
+      <li><b>نقاط الضعف (الثغرات):</b> عيب في النظام يستغله المهاجم.</li>
+    </ul></div>
+  <div class="card"><div class="ic">🌍</div><h3>ثانياً: مصادر خارجية</h3>
+    <p>تنشأ من خارج المنشأة:</p>
+    <ul>
+      <li><b>الكوارث الطبيعية:</b> الزلازل والفيضانات والحرائق التي تدمر المعدات.</li>
+      <li><b>الهجمات والاختراقات السيبرانية:</b> يقوم بها أفراد أو جماعات لسرقة البيانات أو تعطيل الخدمة.</li>
+    </ul></div>
+</div>
+
+<h2>3) أنواع الهجمات السيبرانية</h2>
+<h3>🖥️ النوع الأول: هجمات الأنظمة (System-based)</h3>
+<p>تعتمد على <b>البرمجيات الخبيثة (Malware)</b> التي تصيب الجهاز وتضر به أو تسرق بياناته:</p>
+<table>
+<tr><th>النوع</th><th>التعريف</th></tr>
+<tr><td>🦠 الفيروسات Viruses</td><td>برمجيات خبيثة تلتصق بملف سليم وتنتشر عند تشغيله، وقد تتلف البيانات أو تبطئ الجهاز.</td></tr>
+<tr><td>🔒 برامج الفدية Ransomware</td><td>تشفّر ملفات الضحية أو تقفل جهازه وتطلب فدية مالية لفك القفل.</td></tr>
+<tr><td>📢 برامج الإعلانات Adware</td><td>تعرض إعلانات مزعجة على الجهاز بهدف جمع الأرباح.</td></tr>
+<tr><td>🕵️ برامج التجسس Spyware</td><td>تسجّل بيانات المستخدم وأنشطته على الجهاز وترسلها للمهاجم.</td></tr>
+<tr><td>🐛 الديدان Worms</td><td>تنتشر ذاتياً من جهاز لآخر عبر الشبكة <u>دون تدخل</u> من المستخدم.</td></tr>
+<tr><td>🐴 أحصنة طروادة Trojans</td><td>تتظاهر بأنها برنامج مفيد لكنها تفتح بابًا خلفياً للمهاجم.</td></tr>
+<tr><td>🤖 البوت نت Botnets</td><td>شبكة من الأجهزة المصابة يتحكم بها المهاجم عن بعد لتنفيذ هجمات.</td></tr>
+</table>
+
+<h3>🌐 النوع الثاني: هجمات الويب (Web-based)</h3>
+<table>
+<tr><th>الهجوم</th><th>الفكرة</th></tr>
+<tr><td>💉 هجمات الحقن Injection</td><td>إدخال أوامر خبيثة (مثل SQL) في نماذج الموقع للوصول إلى قاعدة البيانات.</td></tr>
+<tr><td>🎣 التصيّد Phishing</td><td>انتحال جهة موثوقة (كبنك) عبر رسالة أو موقع مزيف لخداع الضحية وسرقة بياناته.</td></tr>
+<tr><td>🔨 القوة الغاشمة Brute Force</td><td>تجريب عدد هائل من كلمات المرور أو الأرقام السرية حتى يصيب المهاجم الصحيح.</td></tr>
+<tr><td>⛔ حجب الخدمة DoS</td><td>إغراق الشبكة أو الخادم بطلبات كثيرة فيصبح غير متاح للمستخدمين.</td></tr>
+<tr><td>🎭 انتحال DNS Spoofing</td><td>تزوير سجلات DNS لتحويل المستخدم إلى موقع مزيف دون علمه.</td></tr>
+<tr><td>👤 الرجل في المنتصف MITM</td><td>يعترض المهاجم الاتصال بين طرفين ويتنصت على البيانات أو يغيرها.</td></tr>
+</table>
+
+<h2>4) أنواع المخترقين (الهاكرز)</h2>
+<table>
+<tr><th>النوع</th><th>الوصف</th></tr>
+<tr><td>🎩⚫ القبعة السوداء (مجرمون إلكترونيون)</td><td>يخترقون الأنظمة بدافع الربح أو الإضرار.</td></tr>
+<tr><td>🎩⚪ القبعة البيضاء</td><td>محللو أمن يختبرون الأنظمة بإذن لاكتشاف الثغرات وإصلاحها.</td></tr>
+<tr><td>✊ الهاكتيفيست (الحقوقيون)</td><td>يخترقون لأهداف سياسية أو اجتماعية لنشر قضية يؤمنون بها.</td></tr>
+<tr><td>🏛️ المخترقون المدعومون من دولة</td><td>يعملون لصالح حكومات لأغراض سياسية أو عسكرية أو تجسسية.</td></tr>
+</table>
+
+<h2>5) أنواع التهديدات السيبرانية الشائعة</h2>
+<div class="grid">
+  <div class="card"><div class="ic">☣️</div><b>البرمجيات الخبيثة</b><br>تسبب أضراراً أو تسمح بوصول غير مصرح به للنظام.</div>
+  <div class="card"><div class="ic">🔐</div><b>فيروس الفدية</b><br>من أخطر الهجمات؛ يقفل البيانات ويطلب مبلغاً مالياً كبيراً.</div>
+  <div class="card"><div class="ic">🎣</div><b>التصيد للمعلومات</b><br>خداع الضحية لتسليم معلومات حساسة مثل كلمات المرور.</div>
+  <div class="card"><div class="ic">🎯</div><b>التصيد بالرمح</b><br>تصيّد موجَّه لفرد أو مؤسسة محددة بعد دراسة معلوماتها.</div>
+  <div class="card"><div class="ic">⏳</div><b>التسلل المتقدم طويل الأمد (APT)</b><br>المهاجم يبقى داخل الشبكة مدة طويلة دون اكتشاف.</div>
+  <div class="card"><div class="ic">⛔</div><b>هجمات رفض الخدمة</b><br>تعطيل الخدمة بإغراقها بالطلبات.</div>
+  <div class="card"><div class="ic">👤</div><b>استغلال البرامج الثنائية (الوسيط)</b><br>اعتراض الاتصال بين طرفين عبر شبكة Wi-Fi غير آمنة مثلاً.</div>
+</div>
+
+<h2>6) تصنيف المخاطر السيبرانية</h2>
+<div class="grid">
+  <div class="card"><h3>🧭 المستوى الاستراتيجي</h3>
+  <p>مخاطر تؤثر على المؤسسة ككل وعلى قراراتها العليا:</p>
+  <ul><li>حماية معلومات التعريف الشخصية من طرف ثالث</li><li>ضعف المعايير الموحدة للرعاية</li><li>تزايد حجم وشدة الانتهاكات</li><li>شفافية الأمان أمام المستثمرين</li><li>القرصنة الاحتيالية</li><li>الهندسة الاجتماعية</li><li>استخدام العملات الرقمية كأداة نقدية</li><li>المراقبة التجارية</li></ul></div>
+  <div class="card"><h3>⚙️ المستوى التشغيلي</h3>
+  <p>مخاطر مرتبطة بالعمل اليومي والأنظمة:</p>
+  <ul><li>سرقة ملفات التعريف والارتباط (Cookies)</li><li>التحقق من الهوية الشخصية للمستخدم</li><li>بيانات الاعتماد المخترقة</li><li>الاعتماد على البرامج مفتوحة المصدر</li><li>الاعتماد على الثقة بدلاً من التحقق</li><li>تجارة البرامج الضارة</li><li>عدم فعالية الضوابط الأساسية</li><li>فك تشفير البيانات</li></ul></div>
+</div>
+<div class="note">💡 للتمييز: الاستراتيجي = قرارات وسمعة وقوانين على مستوى المؤسسة، والتشغيلي = ثغرات وأدوات وإجراءات تقنية يومية.</div>
+
+<h2>7) طرق الحماية من المخاطر السيبرانية</h2>
+<table>
+<tr><th>الخطر</th><th>طريقة الحماية</th></tr>
+<tr><td>🦠 البرامج الضارة</td><td>تثبيت برامج مكافحة الفيروسات وتحديثها، وعدم فتح مرفقات أو روابط مجهولة.</td></tr>
+<tr><td>🔑 سرقة كلمة المرور</td><td>كلمات مرور قوية، واستخدام <b>المصادقة الثنائية</b>.</td></tr>
+<tr><td>👂 التنصت</td><td>استخدام شبكة خاصة افتراضية <b>VPN</b> وتشفير الاتصال.</td></tr>
+<tr><td>🎣 التصيد</td><td>عدم الضغط على روابط الرسائل المشبوهة، والتأكد من عنوان الموقع (https) وعدم إدخال بيانات حساسة.</td></tr>
+<tr><td>🌐 الهجوم عبر الموقع</td><td>تحديث المتصفح والبرامج، وإيقاف تشغيل البرامج النصية للصفحات غير الموثوقة.</td></tr>
+<tr><td>💉 هجوم SQL</td><td>التحقق من مدخلات النماذج وتحديث الأنظمة واستخدام جدار حماية.</td></tr>
+<tr><td>🔒 برامج الفدية</td><td>نسخ احتياطي دوري وتحديث الأنظمة وعدم فتح المرفقات المجهولة.</td></tr>
+<tr><td>🐴 حصان طروادة</td><td>عدم تحميل برامج من مصادر غير معروفة واستخدام مكافح فيروسات.</td></tr>
+</table>
+<div class="info">🔎 <b>تذكّر:</b> العنوان الذي يبدأ بـ https يعني اتصالاً مشفراً وهو مؤشر أمان، لكن تأكد دائماً من اسم الموقع نفسه.</div>
+</section>
+
+<!-- ============ القسم الثاني: المراجعة ============ -->
+<section id="review">
+  <h2>✅ صح أم خطأ</h2><div id="rTF"></div>
+  <h2>🔘 اختيار من متعدد</h2><div id="rMC"></div>
+  <h2>✏️ أكمل الفراغ</h2><div id="rFI"></div>
+  <h2>💬 إجابة قصيرة</h2><div id="rSH"></div>
+</section>
+
+<!-- ============ القسم الثالث: الاختبار ============ -->
+<section id="exam">
+  <div id="gate" class="card center">
+    <h2 style="border:0">🔐 تسجيل الدخول للاختبار</h2>
+    <p>اكتب اسمك الكامل قبل البدء.</p>
+    <input type="text" id="sname" placeholder="اسم الطالب" maxlength="60" autocomplete="off">
+    <div class="err" id="gerr"></div>
+    <button class="btn" id="start">ابدأ الاختبار ▶</button>
+    <div id="hist" style="margin-top:14px;text-align:right"></div>
+  </div>
+  <div id="run" style="display:none">
+    <div class="bar"><span id="who"></span><span>⏱️ <span class="timer" id="tm">00:00</span></span><span id="prog"></span></div>
+    <div id="eq"></div>
+    <div class="center"><button class="btn" id="finish">إنهاء وعرض النتيجة ✔</button></div>
+  </div>
+  <div id="res" class="card center" style="display:none"></div>
+</section>
+</main>
+
+<script>
+/* ========== بيانات الأسئلة ========== */
+// صح/خطأ: [نص، الإجابة، التوضيح]
+const TF=[
+["برمجيات الإعلانات هي برمجيات خبيثة تعرض الإعلانات على جهازك بهدف جمع الربح.",true,"صحيح: هذا تعريف برامج الإعلانات Adware."],
+["حجب الخدمة هجوم يجعل الشبكة أو الخادم غير متاح للمستخدمين.",true,"صحيح: يتم ذلك بإغراق الخادم بطلبات كثيرة."],
+["النسخ الاحتيالي (التصيد) يعني استخدام المواقع الموثوق بها عند تقديم معلومات شخصية.",false,"خطأ: التصيد هو انتحال جهة موثوقة بموقع أو رسالة مزيفة لسرقة البيانات."],
+["العنوان الذي يبدأ بـ https يدل على اتصال مشفّر ويُعد مؤشراً على الأمان.",true,"صحيح: الحرف s يعني اتصالاً مشفراً، بخلاف http."],
+["برمجيات التجسس تسجّل بيانات المستخدم وأنشطته على الجهاز أو النظام.",true,"صحيح: ثم ترسلها للمهاجم."],
+["الفيروسات هي التي تنتشر ذاتياً بين الأجهزة دون أي تدخل.",false,"خطأ: التي تنتشر ذاتياً هي الديدان Worms، أما الفيروس فيحتاج لتشغيل الملف المصاب."],
+["الكوارث الطبيعية مصدر داخلي للمخاطر السيبرانية.",false,"خطأ: هي مصدر خارجي لأنها تنشأ من خارج المنشأة."],
+["برامج الفدية تقفل الملفات أو الجهاز وتطلب مالاً مقابل فك القفل.",true,"صحيح: هذا هو أسلوب عملها."]];
+// اختيار من متعدد: [نص، [خيارات]، رقم الصحيح، التوضيح]
+const MC=[
+["أي هجوم يمنع المستخدمين من الوصول للخدمة؟",["التجسس","حجب الخدمة","الحقن","الفيروس"],1,"حجب الخدمة يغرق الخادم بالطلبات فيصبح غير متاح."],
+["الرسالة التي تنتحل شخصية بنك لسرقة بياناتك مثال على:",["التصيد","الدودة","البوت نت","التشفير"],0,"التصيد يخدع الضحية بانتحال جهة موثوقة."],
+["للحماية من خطر التنصت نستخدم:",["الفدية","VPN","Adware","الحقن"],1,"VPN يشفّر الاتصال فلا يستطيع المتنصت قراءته."],
+["مخترقو القبعة البيضاء هم:",["مجرمون يسرقون المال","محللو أمن يكتشفون الثغرات بإذن","جواسيس لدولة","مستخدمون عاديون"],1,"يعملون بشكل قانوني لتحسين الأمان."],
+["أي مما يلي مصدر خارجي للمخاطر؟",["خطأ بشري","عطل في المعدات","الفيضانات","خطأ برمجي"],2,"الكوارث الطبيعية تأتي من خارج المنشأة."],
+["مخاطر ضعف المعايير الموحدة للرعاية تصنف على المستوى:",["الاستراتيجي","التشغيلي","كلاهما","لا شيء"],0,"لأنها تتعلق بسياسات المؤسسة العليا."],
+["أفضل وسيلة للتعافي من هجوم الفدية دون دفع المال:",["نسخ احتياطي للبيانات","إعادة تشغيل الراوتر","تغيير الخلفية","حذف المتصفح"],0,"النسخ الاحتياطي يتيح استعادة الملفات."]];
+// أكمل الفراغ: [نص (___ للفراغ)، الإجابة، التوضيح]
+const FI=[
+["يتمثل خطر ______ في قدرة أحد الأطراف على الاستماع للبيانات المتنقلة بين المستخدم والمضيف.","التنصت","وهذا يعني سرقة المعلومات من النظام."],
+["تنقسم الهجمات الإلكترونية إلى نوعين: هجمات ______ وهجمات الويب.","الأنظمة","القسمان: هجمات الأنظمة وهجمات الويب."],
+["تنقسم مصادر المخاطر السيبرانية إلى مصادر داخلية و مصادر ______.","خارجية","الداخلية داخل المنشأة والخارجية خارجها."],
+["______ هي برمجيات خبيثة تسجل بيانات المستخدم وأنشطته.","التجسس","برامج التجسس Spyware."],
+["تُستخدم ______ الثنائية للحماية من سرقة كلمة المرور.","المصادقة","فحتى لو سُرقت كلمة المرور يلزم عامل تحقق ثانٍ."]];
+// إجابة قصيرة: [سؤال، الإجابة النموذجية]
+const SH=[
+["اذكر بإيجاز تصنيف المخاطر السيبرانية على المستوى التشغيلي.","سرقة ملفات التعريف والارتباط، التحقق من الهوية، بيانات الاعتماد المخترقة، البرامج مفتوحة المصدر، الثقة بدل التحقق، تجارة البرامج الضارة، عدم فعالية الضوابط الأساسية، فك تشفير البيانات."],
+["عرّف المخاطر السيبرانية.","احتمال تعرض الأفراد أو المؤسسات لخسارة نتيجة هجوم أو ثغرة في أنظمة المعلومات والاتصالات."],
+["اذكر ثلاثة أنواع من المخترقين.","القبعة السوداء، القبعة البيضاء، الهاكتيفيست، المخترقون المدعومون من دولة (يكفي ثلاثة)."],
+["اذكر طريقتين للحماية من هجمات التصيد.","عدم الضغط على روابط الرسائل المشبوهة، والتأكد من أن عنوان الموقع يبدأ بـ https، وعدم إدخال بيانات حساسة في مواقع غير موثوقة."]];
+
+/* ========== أدوات مساعدة ========== */
+const $=s=>document.querySelector(s);
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+
+/* ========== التنقل بين الأقسام ========== */
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button,section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");$("#"+b.dataset.s).classList.add("on");scrollTo({top:0,behavior:"smooth"});
+});
+
+/* ========== بناء بطاقة سؤال للمراجعة ========== */
+function card(n,text,body,ansHtml){
+  const q=el("div","q",`<b>${n}. ${text}</b>`);
+  q.append(body);
+  const btn=el("button","btn alt show-btn","إظهار الإجابة الصحيحة");
+  const a=el("div","ans",ansHtml);
+  btn.onclick=()=>{a.classList.toggle("show");btn.textContent=a.classList.contains("show")?"إخفاء الإجابة":"إظهار الإجابة الصحيحة"};
+  q.append(btn,a);
+  return {q,reveal:()=>btn.style.display="inline-block"};
+}
+// صح/خطأ و اختيار من متعدد: خيارات قابلة للضغط
+function choiceCard(n,text,opts,right,why){
+  const box=el("div","opts");
+  const c=card(n,esc(text),box,`✅ <b>الإجابة الصحيحة:</b> ${esc(opts[right])}<br>💡 ${esc(why)}`);
+  const bs=opts.map((o,i)=>{const b=el("button","opt",esc(o));
+    b.onclick=()=>{bs.forEach(x=>x.classList.remove("sel","right","wrong"));
+      b.classList.add(i===right?"right":"wrong");c.reveal()};
+    box.append(b);return b});
+  return c.q;
+}
+TF.forEach((t,i)=>$("#rTF").append(choiceCard(i+1,t[0],["صح ✔","خطأ ✘"],t[1]?0:1,t[2])));
+MC.forEach((m,i)=>$("#rMC").append(choiceCard(i+1,m[0],m[1],m[2],m[3])));
+FI.forEach((f,i)=>{const inp=el("input");inp.type="text";inp.placeholder="اكتب إجابتك";
+  const c=card(i+1,esc(f[0]).replace("______","<u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>"),inp,`✅ <b>الإجابة:</b> ${esc(f[1])}<br>💡 ${esc(f[2])}`);
+  inp.oninput=()=>{if(inp.value.trim())c.reveal()};$("#rFI").append(c.q)});
+SH.forEach((s,i)=>{const ta=el("textarea");ta.rows=3;ta.placeholder="اكتب إجابتك الموجزة";
+  const c=card(i+1,esc(s[0]),ta,`✅ <b>الإجابة النموذجية:</b> ${esc(s[1])}<br>💡 قارن إجابتك بالنموذج وأضف ما فاتك.`);
+  ta.oninput=()=>{if(ta.value.trim())c.reveal()};$("#rSH").append(c.q)});
+
+/* ========== الاختبار ========== */
+let exam=[],answers=[],t0=0,timer=null;
+const fmt=s=>String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+function showHist(){
+  const h=store.get("cyber_results")||[];
+  $("#hist").innerHTML=h.length?"<b>📊 آخر النتائج المحفوظة:</b><ul>"+h.slice(-5).reverse().map(r=>`<li>${esc(r.name)} — ${r.score}/${r.total} — ${fmt(r.time)}</li>`).join("")+"</ul>":"";
+}
+showHist();
+$("#sname").value=store.get("cyber_last_name")||"";
+
+$("#start").onclick=()=>{
+  const name=$("#sname").value.trim();
+  if(!name){$("#gerr").textContent="⚠️ الاسم إجباري، يرجى كتابة اسمك.";return}
+  $("#gerr").textContent="";store.set("cyber_last_name",name);
+  // تجميع الأسئلة: صح/خطأ + اختيار من متعدد، بترتيب عشوائي
+  exam=shuffle([...TF.map(t=>({q:t[0],o:["صح ✔","خطأ ✘"],r:t[1]?0:1,w:t[2]})),...MC.map(m=>({q:m[0],o:m[1],r:m[2],w:m[3]}))]);
+  answers=exam.map(()=>-1);
+  $("#who").textContent="👤 "+name;
+  const box=$("#eq");box.innerHTML="";
+  exam.forEach((x,i)=>{
+    const d=el("div","q",`<b>${i+1}. ${esc(x.q)}</b>`),o=el("div","opts");
+    x.o.forEach((t,j)=>{const b=el("button","opt",esc(t));
+      b.onclick=()=>{answers[i]=j;o.querySelectorAll(".opt").forEach(z=>z.classList.remove("sel"));b.classList.add("sel");upd()};
+      o.append(b)});
+    d.append(o);box.append(d)});
+  $("#gate").style.display="none";$("#res").style.display="none";$("#run").style.display="block";
+  t0=Date.now();clearInterval(timer);
+  timer=setInterval(()=>$("#tm").textContent=fmt(Math.floor((Date.now()-t0)/1000)),500);
+  upd();scrollTo({top:0});
+};
+function upd(){$("#prog").textContent=`أُجيب ${answers.filter(a=>a>=0).length}/${exam.length}`}
+
+$("#finish").onclick=()=>{
+  const un=answers.filter(a=>a<0).length;
+  if(un&&!confirm(`لديك ${un} سؤال بلا إجابة. هل تريد الإنهاء؟`))return;
+  clearInterval(timer);
+  const secs=Math.floor((Date.now()-t0)/1000),name=$("#sname").value.trim();
+  const score=exam.filter((x,i)=>answers[i]===x.r).length,pct=Math.round(score/exam.length*100);
+  const h=store.get("cyber_results")||[];
+  h.push({name,score,total:exam.length,time:secs,date:new Date().toLocaleString("ar-EG")});
+  store.set("cyber_results",h);
+  const msg=pct>=85?"🌟 ممتاز! أداء رائع":pct>=65?"👍 جيد، واصل التقدم":pct>=50?"🙂 مقبول، راجع الدرس":"📚 تحتاج لمزيد من المراجعة";
+  const wrong=exam.map((x,i)=>answers[i]!==x.r?`<div class="q"><b>${esc(x.q)}</b><br>إجابتك: ${answers[i]<0?"بلا إجابة":esc(x.o[answers[i]])}<br>✅ الصحيحة: ${esc(x.o[x.r])}<br>💡 ${esc(x.w)}</div>`:"").join("");
+  $("#run").style.display="none";
+  const r=$("#res");r.style.display="block";
+  r.innerHTML=`<h2 style="border:0">نتيجة الطالب: ${esc(name)}</h2><div class="score">${score} / ${exam.length}</div><p>النسبة ${pct}% — الزمن ${fmt(secs)}</p><h3>${msg}</h3>${wrong?`<h3 style="text-align:right">🔍 مراجعة الأخطاء</h3><div style="text-align:right">${wrong}</div>`:""}<button class="btn" id="again">إعادة الاختبار 🔁</button>`;
+  $("#again").onclick=()=>{r.style.display="none";$("#gate").style.display="block";showHist()};
+  scrollTo({top:0});
+};
+</script>
+</body>
+</html>

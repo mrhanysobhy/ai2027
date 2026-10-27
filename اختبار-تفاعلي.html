@@ -1,0 +1,112 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>اختبار تفاعلي</title><style>:root{--bg:#e8ebe5;--card:#fff;--ink:#1b2a27;--mut:#66746f;--line:#d6dbd3;--ac:#0e6b5b;--onac:#fff;--ok:#1e8e5a;--okb:#e3f4ea;--no:#c0392b;--nob:#fbeae7}@media(prefers-color-scheme:dark){:root{--bg:#12171a;--card:#1c2326;--ink:#e6ece9;--mut:#93a19c;--line:#2c3538;--ac:#2fa08c;--onac:#08201c;--ok:#3ec28a;--okb:#14301f;--no:#ef7b6c;--nob:#33191a}}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.8 "Cairo","Segoe UI",Tahoma,"Noto Naskh Arabic",Arial,sans-serif}main{max-width:820px;margin:0 auto;padding:0 14px 60px}.hd{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 0 8px;text-align:center}.hd h1{margin:0;font-size:1.5em}.hd h2{margin:0;font-size:1em;font-weight:600;color:var(--mut)}.bar{height:8px;background:var(--line);border-radius:6px;margin:8px 0 4px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--ac);transition:width .25s}.meta{font-size:.8em;color:var(--mut)}section h3{margin:22px 0 8px;font-size:1.05em;color:var(--ac)}.qc{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}.qc.ok{border-inline-start:6px solid var(--ok)}.qc.no{border-inline-start:6px solid var(--no)}.qt{font-weight:700}.qimg{display:block;max-width:100%;max-height:260px;margin:8px auto;object-fit:contain}.bl{display:inline-block;min-width:90px;border-bottom:2px dotted var(--ink)}.chs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.ch{font:inherit;color:inherit;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:6px 16px;cursor:pointer}.ch:hover:not(:disabled){border-color:var(--ac)}.ch.sel{border-color:var(--ac);background:var(--okb)}.ch.good{border-color:var(--ok);background:var(--okb)}.ch.bad{border-color:var(--no);background:var(--nob)}.ch:disabled{cursor:default}.tx,select{font:inherit;color:inherit;background:var(--card);border:2px solid var(--line);border-radius:8px;padding:6px 10px}.tx{width:100%;margin-top:10px}.mt{display:grid;grid-template-columns:1fr 1fr;gap:6px 20px;margin-top:10px}.mt1{margin-top:10px}.mr{display:flex;gap:10px;align-items:center;margin-bottom:6px}.btn{font:inherit;border:2px solid var(--ac);background:none;color:var(--ac);border-radius:10px;padding:5px 18px;cursor:pointer;margin-top:10px;font-weight:700}.btn.pri{background:var(--ac);color:var(--onac)}.fb{margin-top:8px;font-weight:700}.qc.ok .fb{color:var(--ok)}.qc.no .fb{color:var(--no)}.qc .fb.info{color:var(--mut)}.res{text-align:center;background:var(--card);border:2px solid var(--ac);border-radius:14px;padding:18px;margin-top:18px}.pc{font-size:2.4em;font-weight:800;color:var(--ac)}.mh{font-size:.8em;color:var(--mut);margin-top:2px}@media(max-width:560px){.mt{grid-template-columns:1fr}}</style></head><body><main id="app"></main><script>var norm=function norm(s){
+  return String(s).replace(/[\u064B-\u0652\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه')
+    .replace(/[^\u0600-\u06FFa-zA-Z0-9\s]|_/g,' ').replace(/[\u060C\u061B\u061F]/g,' ').replace(/\s+/g,' ').trim();
+};(function quizRuntime(D,norm){
+  var LET=['أ','ب','ج','د','هـ','و'],DIG='٠١٢٣٤٥٦٧٨٩',BL=/(\.{3,}|\u2026+|_{3,})/g;
+  var app=document.getElementById('app'),items=[],S=[];
+  D.sections.forEach(function(s){s.items.forEach(function(q){items.push(q);});});
+  function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function num(n){var s=String(n);return D.hindi?s.replace(/\d/g,function(d){return DIG[d];}):s;}
+  function sels(i){return [].slice.call(document.querySelectorAll('#q'+i+' select'));}
+  function hasOpts(q){return !!(q.o&&q.o.length);}
+  function card(q,i,k){
+    var h='<div class="qc" id="q'+i+'" data-i="'+i+'"><div class="qt"><b>'+num(k)+'-</b> '+(q.t==='fill'?esc(q.q).replace(BL,'<span class="bl"></span>'):esc(q.q))+'</div>';
+    if(q.img)h+='<img class="qimg" alt="" src="'+esc(q.img)+'">';
+    if(q.t==='multi')h+='<div class="mh">اختر كل الإجابات الصحيحة</div>';
+    if(q.t==='tf')h+='<div class="chs"><button type="button" class="ch" data-v="1">✓ صواب</button><button type="button" class="ch" data-v="0">✗ خطأ</button></div>';
+    else if(q.t==='mcq'||q.t==='multi'||(q.t==='fill'&&hasOpts(q)))h+='<div class="chs">'+q.o.map(function(o,j){return '<button type="button" class="ch" data-v="'+j+'">'+(q.t!=='fill'?'<b>'+LET[j]+'</b> ':'')+esc(o)+'</button>';}).join('')+'</div>';
+    else if(q.t==='fill')h+='<input class="tx" type="text" autocomplete="off" placeholder="اكتب إجابتك">';
+    else if(q.t==='essay')h+='<textarea class="tx" rows="4" placeholder="اكتب إجابتك"></textarea>'+(q.a?'<button type="button" class="btn rv">عرض الإجابة النموذجية</button>':'');
+    else if(q.t==='match')h+='<div class="mt"><div>'+q.l.map(function(x,j){return '<div class="mr"><span>'+num(j+1)+'- '+esc(x)+'</span><select data-j="'+j+'"><option value="">—</option>'+q.r.map(function(_,m){return '<option value="'+m+'">'+LET[m]+'</option>';}).join('')+'</select></div>';}).join('')+'</div><div>'+q.r.map(function(x,m){return '<div>'+LET[m]+'- '+esc(x)+'</div>';}).join('')+'</div></div>';
+    else if(q.t==='order')h+='<div class="mt1">'+q.it.map(function(x,j){return '<div class="mr"><select data-j="'+j+'"><option value="">—</option>'+q.it.map(function(_,m){return '<option value="'+m+'">'+num(m+1)+'</option>';}).join('')+'</select><span>'+esc(x)+'</span></div>';}).join('')+'</div>';
+    if(D.instant&&(q.t==='match'||q.t==='order'||q.t==='multi'||(q.t==='fill'&&!hasOpts(q))))h+='<button type="button" class="btn ck">تحقق</button>';
+    return h+'<div class="fb" aria-live="polite"></div></div>';
+  }
+  function start(){
+    S=items.map(function(){return {done:false,ok:null,v:null};});
+    var h='<header class="hd"><h1>'+esc(D.title||'اختبار تفاعلي')+'</h1>'+(D.grade?'<h2>'+esc(D.grade)+'</h2>':'')+'<div class="bar"><i id="pb"></i></div><div class="meta" id="meta"></div></header>',i=0;
+    D.sections.forEach(function(s){
+      h+='<section><h3>'+esc(s.title)+': '+esc(s.instr)+'</h3>';
+      s.items.forEach(function(q,k){h+=card(q,i++,k+1);});
+      h+='</section>';
+    });
+    app.innerHTML=h+'<div style="text-align:center"><button type="button" class="btn pri" id="fin">إنهاء وعرض النتيجة</button></div><div class="res" id="res" hidden></div>';
+    refresh();
+  }
+  function answered(i){
+    var q=items[i];
+    if(q.t==='match'||q.t==='order')return sels(i).every(function(e){return e.value!=='';});
+    if(q.t==='essay'||(q.t==='fill'&&!hasOpts(q))){var e=document.querySelector('#q'+i+' .tx');return !!e&&e.value.trim()!=='';}
+    return S[i].v!==null;
+  }
+  function refresh(){
+    var a=0,ok=0,g=0;
+    items.forEach(function(q,i){
+      if(S[i].done||answered(i))a++;
+      if(S[i].done&&q.t!=='essay'){g++;if(S[i].ok)ok++;}
+    });
+    document.getElementById('pb').style.width=Math.round(a/items.length*100)+'%';
+    document.getElementById('meta').textContent='أجبت عن '+num(a)+' من '+num(items.length)+(D.instant&&g?' — الدرجة الحالية: '+num(ok)+' / '+num(g):'');
+  }
+  function grade(i){
+    var s=S[i],q=items[i],c=document.getElementById('q'+i),fb=c.querySelector('.fb'),ok=false,ans='';
+    if(s.done)return;s.done=true;
+    var sv=sels(i).map(function(e){return e.value;});
+    if(q.t==='tf'){ok=s.v!==null&&(s.v===1)===q.a;ans=q.a?'صواب':'خطأ';}
+    else if(q.t==='mcq'){ok=s.v!==null&&q.c.indexOf(s.v)>-1;ans=q.c.map(function(j){return q.o[j];}).join(' / ');}
+    else if(q.t==='multi'){
+      var pk=(s.v||[]).slice().sort(),cr=q.c.slice().sort();
+      ok=pk.length===cr.length&&pk.every(function(x,k){return x===cr[k];});
+      ans=q.c.map(function(j){return q.o[j];}).join(' / ');
+    }
+    else if(q.t==='fill'){
+      var v=hasOpts(q)?(s.v===null?'':q.o[s.v]):c.querySelector('.tx').value,nv=norm(v);
+      ok=!!nv&&q.a.some(function(a){return norm(a)===nv;});ans=q.a.join(' / ');
+    }else if(q.t==='match'){
+      ok=sv.every(function(x,j){return x===String(q.c[j]);});
+      ans=q.c.map(function(m,j){return num(j+1)+'←'+LET[m];}).join('، ');
+    }else if(q.t==='order'){
+      ok=sv.every(function(x,j){return x===String(q.c[j]);});
+      var arr=[];q.c.forEach(function(p,j){arr[p]=q.it[j];});ans=arr.join(' ← ');
+    }else ans=q.a||'';
+    s.ok=q.t==='essay'?null:ok;
+    [].forEach.call(c.querySelectorAll('.ch'),function(b){
+      var j=+b.getAttribute('data-v'),good;
+      if(q.t==='tf')good=(j===1)===q.a;
+      else if(q.t==='mcq'||q.t==='multi')good=q.c.indexOf(j)>-1;
+      else good=q.a.some(function(a){return norm(a)===norm(q.o[j]);});
+      if(good)b.classList.add('good');else if(Array.isArray(s.v)?s.v.indexOf(j)>-1:s.v===j)b.classList.add('bad');
+    });
+    [].forEach.call(c.querySelectorAll('input,textarea,select,button.ch,button.ck,button.rv'),function(e){e.disabled=true;});
+    if(q.t==='essay'){fb.className='fb info';fb.innerHTML=ans?'الإجابة النموذجية: '+esc(ans):'تم تسجيل إجابتك (سؤال مقالي لا يُصحَّح آلياً)';}
+    else{c.classList.add(ok?'ok':'no');fb.innerHTML=ok?'✓ إجابة صحيحة':'✗ إجابة غير صحيحة — الصحيح: '+esc(ans);}
+    refresh();
+  }
+  function finish(){
+    items.forEach(function(q,i){grade(i);});
+    var tot=0,ok=0;
+    items.forEach(function(q,i){if(q.t!=='essay'){tot++;if(S[i].ok)ok++;}});
+    var p=tot?Math.round(ok/tot*100):0,r=document.getElementById('res');
+    r.innerHTML='<h2>النتيجة: '+num(ok)+' من '+num(tot)+'</h2><div class="pc">'+num(p)+'%</div><p>'+(p>=85?'ممتاز! 🌟':p>=65?'جيد جداً 👏':p>=50?'جيد، يمكنك التحسّن 💪':'حاول مرة أخرى 📘')+'</p><button type="button" class="btn" id="again">إعادة الاختبار</button>';
+    r.hidden=false;r.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target.closest?e.target.closest('button'):null;if(!t)return;
+    if(t.id==='fin'){finish();return;}
+    if(t.id==='again'){start();window.scrollTo(0,0);return;}
+    var c=t.closest('.qc');if(!c)return;
+    var i=+c.getAttribute('data-i');if(S[i].done)return;
+    if(t.classList.contains('ch')&&items[i].t==='multi'){
+      var mv=S[i].v||[],mj=+t.getAttribute('data-v'),mp=mv.indexOf(mj);
+      if(mp>-1){mv.splice(mp,1);t.classList.remove('sel');}else{mv.push(mj);t.classList.add('sel');}
+      S[i].v=mv.length?mv:null;refresh();
+    }else if(t.classList.contains('ch')){
+      [].forEach.call(c.querySelectorAll('.ch'),function(b){b.classList.remove('sel');});
+      t.classList.add('sel');S[i].v=+t.getAttribute('data-v');
+      if(D.instant)grade(i);else refresh();
+    }else if(t.classList.contains('ck')||t.classList.contains('rv'))grade(i);
+  });
+  document.addEventListener('input',function(){refresh();});
+  document.addEventListener('change',function(){refresh();});
+  start();
+})({"title":"","grade":"","hindi":true,"instant":true,"skipped":0,"sections":[{"title":"السؤال الأول","instr":"اختر الإجابة الصحيحة من بين الإجابات المعطاة","items":[{"t":"mcq","q":"أيٌّ مما يلي يُعبر بشكل دقيق عن مفهوم المخاطر السبرانية الناجمة عن استخدام تكنولوجيا المعلومات والشبكات الرقمية؟","img":"","o":["الأعطال المادية الناتجة حتماً عن الاستخدام اليومي العادي لأجهزة الحاسوب الشخصية.","البرامج التوعوية التي تهدف إلى تدريب الموظفين على حماية بياناتهم الشخصية.","التهديدات والتأثيرات السلبية على الأمان والخصوصية وفقدان البيانات المترتبة على استخدام التكنولوجيا الرقمية.","الكوارث الطبيعية كالفيضانات والهزات الأرضية التي تصيب المباني فقط دون الأجهزة."],"c":[2]},{"t":"mcq","q":"تعرضت إحدى الشركات لخلل تشغيلي وإحداث حريق نتيجة استخدام بطارية غير متوافقة في جهاز حاسوب محمول. يُصنَّف هذا الخطر ضمن:","img":"","o":["خلل في المعدات والأجهزة.","أخطاء البرمجيات والتطبيقات.","هجمات حجب الخدمة الخارجية.","مخاطر الهندسة الاجتماعية."],"c":[0]},{"t":"mcq","q":"عند استخدام برنامج لمعالجة النصوص وتحديد هوامش معينة للطباعة، لوحظ أن الصفحة المطبوعة لا تطابق التحديد بالرغم من عدم وجود خطأ بشري. يعود ذلك إلى:","img":"","o":["وجود تلف دائم في وحدة المعالجة المركزية.","وجود أخطاء في البرمجيات تؤدي لنتائج غير متوقعة.","تعرض الجهاز لهجوم حقن النصوص SQL.","خطأ في إدخال البيانات المعتمدة من مشغل الحاسوب."],"c":[1]},{"t":"mcq","q":"كيف تختلف الكوارث الطبيعية كالهزات الأرضية والفيضانات عن الهجمات السبرانية من حيث تأثيرها على نظم المعلومات؟","img":"","o":["الكوارث الطبيعية تُصنف حصرياً ضمن المصادر الداخلية للخطر في الأمن السبراني.","الهجمات السبرانية لا تؤثر إلا على الأفراد، بينما الكوارث الطبيعية تصيب المؤسسات فقط.","الكوارث الطبيعية يمكن الوقاية منها بالكامل عبر استخدام برامج مضادات الفيروسات.","الكوارث الطبيعية تقضي غالباً على المكونات المادية والمعدات بشكل مباشر، بينما الهجمات تسعى للاستغلال أو التعطيل البرمجي."],"c":[3]},{"t":"mcq","q":"ما الخاصية الأساسية التي تميز الفيروسات (Viruses) عن بقية أنواع البرمجيات الخبيثة؟","img":"","o":["قيامها بتشفير بيانات المستخدم والمطالبة بمبالغ مالية لفك التشفير.","انتقالها الذاتي عبر الشبكة دون الحاجة لتدخل بشري أو برنامج حاطن.","تنكرها في صورة برنامج مفيد وحقيقي لخداع المستخدم عند تثبيته.","قدرتها على إعادة تصنيع ونسخ نفسها والالتصاق بالملفات لإلحاق الضرر بالأجهزة."],"c":[3]},{"t":"mcq","q":"يلاحظ مستخدم أن بطاقته الائتمانية تُستخدم في معاملات لم يقم بها، بالرغم من عدم مشاركتها مع أحد. أي البرمجيات الخبيثة الآتية هي الأرجح في تسريب هذه البيانات؟","img":"","o":["برامج الإعلانات (Adwares) التي تعرض نوافذ ترويجية متكررة.","برامج حجب الخدمة (DoS) التي تضغط على خوادم الشبكة.","برامج الديدان (Worms) التي تستهلك ذاكرة الجهاز دون سرقة البيانات.","برامج التجسس (Spywares) التي تسجل نشاط المدخلات والبيانات الحساسة."],"c":[3]},{"t":"mcq","q":"ما الخدعة الرئيسية التي تعتمد عليها برمجيات أحصنة طروادة (Trojans) للاختراق؟","img":"","o":["التظاهر بأنها أداة أو برنامج مفيد وقانوني لإقناع المستخدم بتحميله وتثبيته.","التكاثر الذاتي والتنقل بين الأجهزة عبر موصلات الشبكة دون تحميل.","اعتراض الرسائل الإلكترونية في المنتصف وتغيير محتواها تلقائياً.","استغلال ثغرات البروتوكول لتنفيذ هجوم حجب الخدمة الموزع."],"c":[0]},{"t":"mcq","q":"أي هجمات الويب التالية تعتمد على إدخال أكواد برمجية خبيثة داخل تطبيق الويب للتلاعب بقواعد البيانات واستخراجها؟","img":"","o":["هجمات انتحال الشخصية (DNS Spoofing).","هجمات القوة الغاشمة (Brute Force Attacks).","هجمات رفض الخدمة (Denial of Service).","هجمات الحقن (Injection Attacks) مثل حقن SQL."],"c":[3]},{"t":"mcq","q":"تلقى موظف رسالة إلكترونية تبدو وكأنها قادمة من البنك الذي يتعامل معه تطلب منه تحديث كلمة المرور عبر رابط مرفق. يُسمى هذا النوع من الهجمات:","img":"","o":["التصيّد أو الخداع (Phishing)","هجوم الحقن (SQL Injection)","هجوم الرجل في المنتصف (Man-in-the-middle)","هجوم القوة الغاشمة (Brute Force)"],"c":[0]},{"t":"mcq","q":"عندما يقوم المخترق بالتلاعب بنظام أسماء النطاقات لتوجيه المستخدمين من موقع حقيقي إلى موقع مزيف دون علمهم، فإن هذا الهجوم يُعرف بـ:","img":"","o":["هجوم التسلسل المتقدم (APT)","انتحال الشخصية (DNS Spoofing)","هجوم حقن الكود (Code Injection)","هجوم الرجل في المنتصف (Man-in-the-middle)"],"c":[1]},{"t":"mcq","q":"قام فريق من المخترقين باختراق موقع حكومي ونشر بيانات اعتراضا على سياسة معينة دون المطالبة بأي مبالغ مالية. يُصنف هؤلاء المخترقون ضمن:","img":"","o":["المخترقين الحقوقيين (Hacktivists)","المجرمين الإلكترونيين التقليديين (Cyber Criminals)","مخترقي القبعة البيضاء (White-Hat Hackers)","المخترقين المجندين دولياً (State-sponsored Attackers)"],"c":[0]},{"t":"mcq","q":"أيٌّ من المخاطر الآتية يُصنف ضمن **المخاطر السبرانية على المستوى الاستراتيجي** وليس التشغيلي؟","img":"","o":["مخاطر تزايد حجم وشدة الانتهاكات ومخاطر الشفافية أمام المستثمرين.","مخاطر سرقة ملفات التعريف والارتباط (Cookies) الخاصة بالمستخدم.","مخاطر فك تشفير البيانات المنقولة عبر الشبكات المباشرة.","مخاطر الاعتماد على البرامج مفتوحة المصدر في تحسين الشفرات."],"c":[0]},{"t":"mcq","q":"ما السبب الرئيسي الذي يجعل مخاطر الهندسة الاجتماعية (Social Engineering) شائعة وخطيرة جداً في العالم الرقمي؟","img":"","o":["قدرتها الفائقة على تعطيل الخوادم الرئيسية دون التفاعل مع المستخدمين.","اقتصار استهدافها على برمجيات تشغيل الهواتف الذكية الحديثة فقط.","استخدامها لمعادلات رياضية معقدة لفك تشفير المحافظ الرقمية.","اعتمادها على التلاعب الخادع بالعامل البشري لاستغلال ثقة الأشخاص واستخلاص معلومات حساسة."],"c":[3]},{"t":"mcq","q":"تهدف سرقة ملفات التعريف والارتباط (Cookies) على متصفح المستخدم بشكل مباشر إلى:","img":"","o":["الحصول على معلومات جلسة الدخول والأرقام السرية للوصول لصفحات المستخدم الشخصية.","التسبب في إيقاف خدمات معالجة المكونات الهاردويرية.","إحداث تلف مادي في قرص التخزين الصلب للحاسوب.","إعادة توجيه اتصالات الشبكة اللاسلكية لموزع آخر."],"c":[0]},{"t":"mcq","q":"عند تصفح موقع إلكتروني يتطلب إدخال بيانات بطاقة الائتمان، كيف يمكنك التأكد من أن الاتصال بالموقع مشفر وآمن؟","img":"","o":["التأكد من أن عنوان URL للموقع يبدأ بـ https بدلاً من http.","التأكد من إغلاق جميع النوافذ المنبثقة والإعلانات.","استخدام برامج الحماية من هجمات القوة الغاشمة فقط.","التحقق من تنزيل ملفات الكوكيز تلقائياً بدون استئذان."],"c":[0]},{"t":"mcq","q":"ما الفائدة الرئيسية من تطبيق نظام المصادقة الثنائية (Two-Factor Authentication) عند تسجيل الدخول للحسابات؟","img":"","o":["تسريع عملية نقل البيانات بين المتصفح والخادم المضيف.","إضافة خطوة تحقق إضافية تتطلب خطوتين للدخول، مما يمنع الدخول حتى لو تم سرقة كلمة المرور.","إيقاف تشغيل البرامج النصية للصفحات لمنع هجمات الحقن.","فك تشفير البيانات المعقدة المخزنة على الخادم التابع للمؤسسة."],"c":[1]}]},{"title":"السؤال الثاني","instr":"أكمل ما يأتي","items":[{"t":"fill","q":"تُعد الأخطاء ___ من أكثر التهديدات تأثيراً في نظم المعلومات، وتشمل الأفعال غير المقصودة من الموظفين أو التجاوزات غير المسموح بها.","img":"","a":["البشرية"]},{"t":"fill","q":"تُعرف ___ في الأمن السبراني بأنها نقطة أو عنصر في النظام يحتمل أن ينفذ من خلاله المعتدي لتحقيق الاختراق.","img":"","a":["الثغرة"]},{"t":"fill","q":"تُعرف البرمجيات الخبيثة التي تقوم بتشفير ملفات الجهاز ومنع المستخدم من الوصول إليها إلا بعد دفع مبلغ مالي باسم برامج ___.","img":"","a":["الفدية"]},{"t":"fill","q":"تنتقل ___ من جهاز إلى آخر عبر الشبكة دون حاجة إلى تدخل بشري أو الالتصاق ببرنامج آخر.","img":"","a":["الديدان السيبرانية"]},{"t":"fill","q":"اشرح كيف تستغل شبكات \"البوتنتس\" (Botnets) الأجهزة المخترقة لتنفيذ هجمات سبرانية واسعة النطاق.","img":"","a":["يتم التحكم في الأجهزة المخترقة عن بُعد عبر شبكة من الروبوتات الموجهة (Bots) لتنفيذ هجمات منسقة واسعة النطاق مثل حجب الخدمة (DDoS) أو إرسال الرسائل المزعجة."]},{"t":"fill","q":"يعتمد هجوم ___ على التجربة المتكررة والعمياء لجميع الاحتمالات الممكنة للوصول إلى كلمة المرور أو رقم PIN الصحيح.","img":"","a":["القوة الغاشمة"]},{"t":"fill","q":"وضح آلية عمل هجوم حجب الخدمة (Denial of Service) وكيف يؤثر على خوادم الشركات.","img":"","a":["يعتمد على إغراق الخادم بكميات هائلة من طلبات المرور الوهمية بما يتجاوز قدرته الاستيعابية، مما يؤدي إلى شل حركة الخادم وجعله غير قادر على تلبية طلبات المستخدمين الحقيقيين أو تعطيله بالكامل."]},{"t":"fill","q":"يُطلق على محللي الأمن الأخلاقيين الذين يكتشفون الثغرات ويعالجونها لمنع المخترقين من استغلالها اسم مخترقي القبعة ___.","img":"","a":["البيضاء"]},{"t":"fill","q":"تُسهم العملات الرقمية المشفرة في تسهيل الجرائم السبرانية بسبب سهولة تخزينها ونقلها وإمكانية إجراء المعاملات عبر الشبكة المظلمة الـ ___.","img":"","a":["Dark Web"]},{"t":"fill","q":"ناقش خطورة الاعتماد على البرامج مفتوحة المصدر (Open-Source Software) من الناحية الأمنية التشغيلية في المؤسسات.","img":"","a":["تكمن الخطورة في أن الشفرة المصدرية متاحة للجميع، مما يتيح للمخترقين دراستها بتمعن لاكتشاف الثغرات الأمنية الخفية واستغلالها قبل أن يتم ترقيعها، إضافة إلى احتمالية دمج مكتبات برمجية ضارة من قبل مطورين غير موثوقين."]},{"t":"fill","q":"يُوصى عند استخدام شبكات Wi-Fi العامة بتثبيت شبكة افتراضية خاصة تُعرف بـ ___ لتشفير البيانات المرسلة عبر الاتصال.","img":"","a":["VPN"]},{"t":"fill","q":"بين الفرق الأساسي بين المصادر الداخلية والمصادر الخارجية للمخاطر السبرانية، مع ذكر مثال واحد لكل منهما.","img":"","a":["المصادر الداخلية تنشأ من داخل المؤسسة (مثل الأخطاء البشرية للموظفين أو التسريب الداخلي)، بينما المصادر الخارجية تأتي من خارج المؤسسة والبيئة المحيطة (مثل الهجمات السيبرانية الخارجية والفيروسات وبرمجيات الفدية)."]}]}]},norm);</script></body></html>
